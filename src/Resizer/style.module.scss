@@ -1,0 +1,6 @@
+.resizerClass{
+    composes: flexShrink0 from "flexclasses.module";  
+    composes: cursorPointer from "helperclasses.module";
+    flex-basis: 7px;
+    background: #222;
+}
