@@ -1,27 +1,41 @@
+import React from "react";
 import ReactDOM from "react-dom";
-//import Resizer from "../Resizer";
-
-import {
-    ByType
-} from "./utils";
+import PropTypes from "prop-types";
+import Resizer from "../Resizer";
 
 import _ from "lodash";
 
-class Container extends React.PureComponent{
+const ByType = {
+    row: {
+        style: {
+            display: "flex",
+            flexFlow: "row nowrap"
+        },
+        ptr: "pageX",
+        dim: "clientWidth",
+        prop: "width",
+        min: "minWidth",
+        max: "maxWidth"
+    },
+    col: {
+        style: {
+            display: "flex",
+            flexFlow: "column nowrap"
+        },
+        ptr: "pageY",
+        dim: "clientHeight",
+        prop: "height",
+        min: "minHeight",
+        max: "maxHeight"
+    }
+}
+
+class Container extends React.Component{
 
     static propTypes = {
-        onResizerDrag:          PropTypes.func,
-        onResizerDragStart:     PropTypes.func,
-        type:                   PropTypes.oneOf([ "row", "col" ]),
+        type:                   PropTypes.oneOf([ "row", "col" ]).isRequired,
+        resizerClassName:       PropTypes.string,
         children:               PropTypes.node,
-
-        /* Use it, if you want to use custom Resizer or wrap default with some HOC */
-        ResizerElement:         PropTypes.oneOfType([ PropTypes.func, PropTypes.object ])
-    }
-
-    static defaultProps = {
-        type: "row",
-       // ResizerElement: Resizer
     }
 
     state = {}
@@ -54,7 +68,12 @@ class Container extends React.PureComponent{
         this[ "_maxD" + fieldIndex ] = isNaN( maxVal ) ? null : maxVal;
     }
 
-    onDragStart = ( index, e ) => {
+    onStart = ( index, e ) => {
+
+        if( process.env.NODE_ENV === "development" ){
+            console.log( "onStart", index, e );
+        }
+
         const { ptr } = ByType[ this.props.type ];
 
         this._initPtrPageDist = e[ ptr ];
@@ -96,6 +115,10 @@ class Container extends React.PureComponent{
 
     onDrag = ( index, e ) => {
 
+        if( process.env.NODE_ENV === "development" ){
+            console.log( "onDrag", index, e );
+        }
+
         const { ptr, prop } = ByType[ this.props.type ];
         const step = e[ ptr ] - this._initPtrPageDist;
 
@@ -124,14 +147,13 @@ class Container extends React.PureComponent{
             throw new Error( "Fragments are not supported in ResizableFlexGrid right now." );
         }
 
-        return React.cloneElement( el, type === this.props.ResizerElement ? {
+        return React.cloneElement( el, type === Resizer ? {
             index,
             onDrag: this.onDrag,
-            onDragStart: this.onDragStart,
+            onStart: this.onStart,
             type: this.props.type,
             ref: this._getSaveRef( index )
         } : {
-            ResizerElement: type === Container ? this.props.ResizerElement : undefined,
             style: props.style ? {
                 ...props.style,
                 ...this.state[ index ]
@@ -149,32 +171,30 @@ class Container extends React.PureComponent{
             style
         } = this.props;
 
+        const baseStyle = ByType[ type ].style;
+
         return (
             <div
-                style={style}
-                className={cn(ByType[ type ].className,className)}
+                style={ style ? { ...baseStyle, ...style } : baseStyle }
+                className={className}
                 children={React.Children.map( children, this.childrenMapper )}
             />
         )
     }
 
-    _dimensionsStateModifier = curState => {
+    _dimensionsStateModifier = ( curState, { type } ) => {
         
-        const { prop, dim } = ByType[ this.props.type ];
+        const { prop, dim } = ByType[ type ];
 
-        let resultState = {};
-
-        for( let i = this.refsArr.length, ref; i--; ){
-            ref = this.refsArr[ i ];
+        return this.refsArr.reduce(( acc, ref, i ) => {
             if( ref ){
-                resultState[ i ] = {
+                acc[ i ] = {
                     ...curState[ i ],
                     [prop]: ref[ dim ]
                 }
             }
-        }
-
-        return resultState;
+            return acc;
+        }, {});
     }
 
     setExactDimensions = _.throttle(() => this.setState( this._dimensionsStateModifier ), 150, {

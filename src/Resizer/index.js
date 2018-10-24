@@ -1,5 +1,6 @@
-import { resizerClass } from "./style.module";
-import { DraggableLayer } from "components/threeEventsLogic";
+import React from "react";
+import PropTypes from "prop-types";
+import { DraggableCore } from "react-draggable";
 
 import { withHandlers } from "recompose";
 
@@ -7,23 +8,20 @@ const getHandler = propName => props => e => props[ propName ]( props.index, e )
 
 const Resizer = ({
     className,
-    baseClassName,
     type,
+    style,
     onDrag,
-    onDragStart
+    onStart
 }) => (
-    <DraggableLayer
-        data-type={type}
-        className={cn(baseClassName,className)}
-        onDragStart={onDragStart}
-        onDrag={onDrag}
-    />
+    <DraggableCore onStart={onStart} onDrag={onDrag}>
+        <div className={className} data-resizer-type={type} style={style}>lala</div>
+    </DraggableCore>
 );
 
 Resizer.propTypes = {
     type: PropTypes.oneOf([ "row", "col" ]),
     onDrag: PropTypes.func,
-    onDragStart: PropTypes.func,
+    onStart: PropTypes.func,
     index: PropTypes.number,
     className: PropTypes.oneOfType([
         PropTypes.array,
@@ -37,11 +35,7 @@ Resizer.propTypes = {
     ])
 }
 
-Resizer.defaultProps = {
-    baseClassName: resizerClass
-}
-
 export default withHandlers({
     onDrag: getHandler( "onDrag" ),
-    onDragStart: getHandler( "onDragStart" )
+    onStart: getHandler( "onStart" )
 })( Resizer );

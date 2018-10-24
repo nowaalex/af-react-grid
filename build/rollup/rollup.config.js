@@ -4,14 +4,17 @@ import babel from "rollup-plugin-babel";
 export default {
     input: "src/index.js",
     output: {
-        file: "bundle.js",
+        file: "dist/bundle.js",
         format: "esm"
     },
     external: [
         "react",
         "react-dom",
+        "prop-types",
         "classnames",
-        "lodash"
+        "lodash",
+        "recompose",
+        "react-draggable"
     ],
     plugins: [
         resolve({

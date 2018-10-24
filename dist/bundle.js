@@ -1,12 +1,9 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var flexclasses_module = require('flexclasses.module');
-var ReactDOM = _interopDefault(require('react-dom'));
-var _ = _interopDefault(require('lodash'));
+import React from 'react';
+import PropTypes from 'prop-types';
+import { DraggableCore } from 'react-draggable';
+import { withHandlers } from 'recompose';
+import ReactDOM from 'react-dom';
+import _ from 'lodash';
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -42,9 +39,42 @@ function _objectSpread(target) {
   return target;
 }
 
+const getHandler = propName => props => e => props[propName](props.index, e);
+
+const Resizer = ({
+  className,
+  type,
+  style,
+  onDrag,
+  onStart
+}) => React.createElement(DraggableCore, {
+  onStart: onStart,
+  onDrag: onDrag
+}, React.createElement("div", {
+  className: className,
+  "data-resizer-type": type,
+  style: style
+}, "lala"));
+
+Resizer.propTypes = {
+  type: PropTypes.oneOf(["row", "col"]),
+  onDrag: PropTypes.func,
+  onStart: PropTypes.func,
+  index: PropTypes.number,
+  className: PropTypes.oneOfType([PropTypes.array, PropTypes.string, PropTypes.object]),
+  baseClassName: PropTypes.oneOfType([PropTypes.array, PropTypes.string, PropTypes.object])
+};
+var Resizer$1 = withHandlers({
+  onDrag: getHandler("onDrag"),
+  onStart: getHandler("onStart")
+})(Resizer);
+
 const ByType = {
   row: {
-    className: flexclasses_module.flexRowNowrap,
+    style: {
+      display: "flex",
+      flexFlow: "row nowrap"
+    },
     ptr: "pageX",
     dim: "clientWidth",
     prop: "width",
@@ -52,7 +82,10 @@ const ByType = {
     max: "maxWidth"
   },
   col: {
-    className: flexclasses_module.flexColumnNowrap,
+    style: {
+      display: "flex",
+      flexFlow: "column nowrap"
+    },
     ptr: "pageY",
     dim: "clientHeight",
     prop: "height",
@@ -61,7 +94,7 @@ const ByType = {
   }
 };
 
-class Container extends React.PureComponent {
+class Container extends React.Component {
   constructor(...args) {
     super(...args);
 
@@ -83,7 +116,11 @@ class Container extends React.PureComponent {
 
     _defineProperty(this, "refsArr", []);
 
-    _defineProperty(this, "onDragStart", (index, e) => {
+    _defineProperty(this, "onStart", (index, e) => {
+      if (process.env.NODE_ENV === "development") {
+        console.log("onStart", index, e);
+      }
+
       const {
         ptr
       } = ByType[this.props.type];
@@ -105,6 +142,10 @@ class Container extends React.PureComponent {
     });
 
     _defineProperty(this, "onDrag", (index, e) => {
+      if (process.env.NODE_ENV === "development") {
+        console.log("onDrag", index, e);
+      }
+
       const {
         ptr,
         prop
@@ -131,37 +172,34 @@ class Container extends React.PureComponent {
         throw new Error("Fragments are not supported in ResizableFlexGrid right now.");
       }
 
-      return React.cloneElement(el, type === this.props.ResizerElement ? {
+      return React.cloneElement(el, type === Resizer$1 ? {
         index,
         onDrag: this.onDrag,
-        onDragStart: this.onDragStart,
+        onStart: this.onStart,
         type: this.props.type,
         ref: this._getSaveRef(index)
       } : {
-        ResizerElement: type === Container ? this.props.ResizerElement : undefined,
         style: props.style ? _objectSpread({}, props.style, this.state[index]) : this.state[index],
         ref: this._getSaveRef(index)
       });
     });
 
-    _defineProperty(this, "_dimensionsStateModifier", curState => {
+    _defineProperty(this, "_dimensionsStateModifier", (curState, {
+      type
+    }) => {
       const {
         prop,
         dim
-      } = ByType[this.props.type];
-      let resultState = {};
-
-      for (let i = this.refsArr.length, ref; i--;) {
-        ref = this.refsArr[i];
-
+      } = ByType[type];
+      return this.refsArr.reduce((acc, ref, i) => {
         if (ref) {
-          resultState[i] = _objectSpread({}, curState[i], {
+          acc[i] = _objectSpread({}, curState[i], {
             [prop]: ref[dim]
           });
         }
-      }
 
-      return resultState;
+        return acc;
+      }, {});
     });
 
     _defineProperty(this, "setExactDimensions", _.throttle(() => this.setState(this._dimensionsStateModifier), 150, {
@@ -202,9 +240,10 @@ class Container extends React.PureComponent {
       children,
       style
     } = this.props;
+    const baseStyle = ByType[type].style;
     return React.createElement("div", {
-      style: style,
-      className: cn(ByType[type].className, className),
+      style: style ? _objectSpread({}, baseStyle, style) : baseStyle,
+      className: className,
       children: React.Children.map(children, this.childrenMapper)
     });
   }
@@ -244,19 +283,10 @@ class Container extends React.PureComponent {
 }
 
 _defineProperty(Container, "propTypes", {
-  onResizerDrag: PropTypes.func,
-  onResizerDragStart: PropTypes.func,
-  type: PropTypes.oneOf(["row", "col"]),
-  children: PropTypes.node,
-
-  /* Use it, if you want to use custom Resizer or wrap default with some HOC */
-  ResizerElement: PropTypes.oneOfType([PropTypes.func, PropTypes.object])
+  type: PropTypes.oneOf(["row", "col"]).isRequired,
+  resizerClassName: PropTypes.string,
+  children: PropTypes.node
 });
 
-_defineProperty(Container, "defaultProps", {
-  type: "row" // ResizerElement: Resizer
-
-});
-
-exports.default = Container;
-exports.Container = Container;
+export default Container;
+export { Container, Resizer$1 as Resizer };
