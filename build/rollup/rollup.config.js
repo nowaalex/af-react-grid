@@ -1,6 +1,7 @@
 import resolve from "rollup-plugin-node-resolve";
 import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
+import copy from "rollup-copy-plugin";
 
 export default {
     input: "src/index.js",
@@ -16,6 +17,9 @@ export default {
         "react-draggable"
     ],
     plugins: [
+        copy({
+            "src/style.css": "dist/style.css"
+        }),
         resolve({
             module: true,
             jsnext: true,

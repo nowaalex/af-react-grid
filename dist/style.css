@@ -1,0 +1,22 @@
+.react-rsz-grid-col{
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.react-rsz-grid-row{
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.react-rsz-grid-default-resizer{
+    flex-shrink: 0;
+    flex-basis: 7px;
+}
+
+.react-rsz-grid-default-resizer[data-resizer-type="col"]{
+    cursor: ns-resize;
+}
+
+.react-rsz-grid-default-resizer[data-resizer-type="row"]{
+    cursor: ew-resize;
+}
