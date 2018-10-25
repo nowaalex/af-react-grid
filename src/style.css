@@ -10,6 +10,7 @@
 
 .react-rsz-grid-default-resizer{
     flex-shrink: 0;
+    flex-grow: 0;
     flex-basis: 7px;
 }
 
