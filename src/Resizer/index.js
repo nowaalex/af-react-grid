@@ -2,19 +2,22 @@ import React from "react";
 import PropTypes from "prop-types";
 import { DraggableCore } from "react-draggable";
 
-import { withHandlers } from "recompose";
-
-const getHandler = propName => props => e => props[ propName ]( props.index, e );
-
 const Resizer = ({
     className,
     type,
     style,
+    index,
     onDrag,
-    onStart
+    onStart,
+    disabled
 }) => (
-    <DraggableCore onStart={onStart} onDrag={onDrag}>
-        <div className={className} data-resizer-type={type} style={style}>lala</div>
+    <DraggableCore onStart={onStart} onDrag={onDrag} disabled={disabled}>
+        <div
+            className={className||"react-rsz-grid-default-resizer"}
+            data-resizer-index={index}
+            data-resizer-type={type}
+            style={style}
+        />
     </DraggableCore>
 );
 
@@ -35,7 +38,4 @@ Resizer.propTypes = {
     ])
 }
 
-export default withHandlers({
-    onDrag: getHandler( "onDrag" ),
-    onStart: getHandler( "onStart" )
-})( Resizer );
+export default Resizer;

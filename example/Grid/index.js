@@ -3,6 +3,8 @@ import React from "react";
 import Container from "Container";
 import Resizer from "Resizer";
 
+//import { Container, Resizer } from "../../dist/bundle.esm";
+
 class Grid extends React.Component{
     render(){
         return (

@@ -1,16 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
+import cn from "classnames";
 import Resizer from "../Resizer";
-
-import _ from "lodash";
 
 const ByType = {
     row: {
-        style: {
-            display: "flex",
-            flexFlow: "row nowrap"
-        },
+        className: "react-rsz-grid-row",
         ptr: "pageX",
         dim: "clientWidth",
         prop: "width",
@@ -18,10 +14,7 @@ const ByType = {
         max: "maxWidth"
     },
     col: {
-        style: {
-            display: "flex",
-            flexFlow: "column nowrap"
-        },
+        className: "react-rsz-grid-col",
         ptr: "pageY",
         dim: "clientHeight",
         prop: "height",
@@ -30,10 +23,42 @@ const ByType = {
     }
 }
 
+const memoizeOneNumericArg = ( fn, cache = {} ) => arg => cache[ arg ] || ( cache[ arg ] = fn( arg ) );
+
+const clamp = ( num, min, max ) => num > max ? max : num < min ? min : num;
+
+const throttle = ( callback, limit ) => {
+
+    let wait = false;
+    let timer;
+
+    const cancelWait = () => wait = false;
+
+    const clearTimer = () => clearTimeout( timer );
+
+    const invoke = () => {
+
+        if ( wait )
+            return;
+
+        callback.apply( null, arguments );
+        wait = true;
+
+        clearTimer();
+
+        timer = setTimeout( cancelWait, limit );
+    }
+
+    invoke.cancel = clearTimer;
+
+    return invoke;
+}
+
 class Container extends React.Component{
 
     static propTypes = {
         type:                   PropTypes.oneOf([ "row", "col" ]).isRequired,
+        className:              PropTypes.string,
         resizerClassName:       PropTypes.string,
         children:               PropTypes.node,
     }
@@ -41,13 +66,17 @@ class Container extends React.Component{
     state = {}
 
     /* Initial dimensions caches, used to calculate sizes onDrag */
-    _initPtrPageDist;
-    _curD1;
-    _curD2;
-    _minD1;
-    _maxD1;
-    _minD2;
-    _maxD2;
+
+    /*
+        _curRszIndex;
+        _initPtrPageDist;
+        _curD1;
+        _curD2;
+        _minD1;
+        _maxD1;
+        _minD2;
+        _maxD2;
+    */
 
     refsArr = [];
 
@@ -56,23 +85,21 @@ class Container extends React.Component{
         const el = this.refsArr[ elIndex ];
 
         const { max, min, dim } = ByType[ this.props.type ];
-        
+
         const obj = getComputedStyle( el );
 
         this[ "_curD" + fieldIndex ] = el[ dim ];
-
-        const minVal = parseInt( obj[ min ], 10 );
-        this[ "_minD" + fieldIndex ] = isNaN( minVal ) ? 0 : minVal;
-
-        const maxVal = parseInt( obj[ max ], 10 );
-        this[ "_maxD" + fieldIndex ] = isNaN( maxVal ) ? null : maxVal;
+        this[ "_minD" + fieldIndex ] = parseInt( obj[ min ], 10 ) || 0;
+        this[ "_maxD" + fieldIndex ] = parseInt( obj[ max ], 10 ) || 0;
     }
 
-    onStart = ( index, e ) => {
+    onStart = e => {
 
         if( process.env.NODE_ENV === "development" ){
-            console.log( "onStart", index, e );
+            console.log( "onStart", e );
         }
+
+        const index = this._curRszIndex = +e.target.getAttribute( "data-resizer-index" );
 
         const { ptr } = ByType[ this.props.type ];
 
@@ -83,40 +110,33 @@ class Container extends React.Component{
 
         const sum = this._curD1 + this._curD2;
 
-        if( this._maxD1 === null ){
+        if( !this._maxD1 ){
             this._maxD1 = sum - this._minD2; 
         }
 
-        if( this._maxD2 === null ){
+        if( !this._maxD2 ){
             this._maxD2 = sum - this._minD1;
         }
     }
 
-    _getChangedState( curState, prop, index, step ){
-        return ({
+    _getChangedState( curState, prop, step ){
+        const index = this._curRszIndex;
+        return {
             [ index - 1 ]: {
                 ...curState[ index - 1 ],
-                [prop]: _.clamp(
-                    this._curD1 + step,
-                    this._minD1,
-                    this._maxD1
-                )
+                [prop]: clamp( this._curD1 + step, this._minD1, this._maxD1 )
             },
             [ index + 1 ]: {
                 ...curState[ index + 1 ],
-                [prop]: _.clamp(
-                    this._curD2 - step,
-                    this._minD2,
-                    this._maxD2
-                )
+                [prop]: clamp( this._curD2 - step, this._minD2, this._maxD2 )
             }
-        })
+        };
     }
 
-    onDrag = ( index, e ) => {
+    onDrag = e => {
 
         if( process.env.NODE_ENV === "development" ){
-            console.log( "onDrag", index, e );
+            console.log( "onDrag", e );
         }
 
         const { ptr, prop } = ByType[ this.props.type ];
@@ -125,13 +145,11 @@ class Container extends React.Component{
         this.setState( curState => this._getChangedState(
             curState,
             prop,
-            index,
             step
         ));
     }
 
-    /* by default only first arg is used as memoization key */
-    _getSaveRef = _.memoize( index => node => {
+    _getSaveRef = memoizeOneNumericArg( index => node => {
         this.refsArr[ index ] = node ? ReactDOM.findDOMNode( node ) : null;
     })
 
@@ -152,7 +170,6 @@ class Container extends React.Component{
             onDrag: this.onDrag,
             onStart: this.onStart,
             type: this.props.type,
-            ref: this._getSaveRef( index )
         } : {
             style: props.style ? {
                 ...props.style,
@@ -171,12 +188,10 @@ class Container extends React.Component{
             style
         } = this.props;
 
-        const baseStyle = ByType[ type ].style;
-
         return (
             <div
-                style={ style ? { ...baseStyle, ...style } : baseStyle }
-                className={className}
+                style={style}
+                className={cn(className,ByType[type].className)}
                 children={React.Children.map( children, this.childrenMapper )}
             />
         )
@@ -197,35 +212,21 @@ class Container extends React.Component{
         }, {});
     }
 
-    setExactDimensions = _.throttle(() => this.setState( this._dimensionsStateModifier ), 150, {
-        leading: false
-    });
+    setExactDimensions = throttle(() => this.setState( this._dimensionsStateModifier ), 150);
 
     componentDidMount(){
         this.setExactDimensions();
         window.addEventListener( "resize", this.setExactDimensions );
     }
 
-    componentDidUpdate({
-        children: prevChildren,
-        height: prevHeight,
-        width: prevWidth
-    }){
+    componentDidUpdate({ children: prevChildren }){
 
-        const {
-            children, 
-            height,
-            width
-        } = this.props;
+        const { children } = this.props;
 
         const prevChildrenLen = React.Children.count( prevChildren );
         const curChildrenLen =  React.Children.count( children );
 
-        if(
-            width !== prevWidth ||
-            height !== prevHeight ||
-            prevChildrenLen !== curChildrenLen
-        ){
+        if( prevChildrenLen !== curChildrenLen ){
             if( prevChildrenLen > curChildrenLen ){
                 this.refsArr.splice( curChildrenLen );
             }
@@ -234,8 +235,8 @@ class Container extends React.Component{
     }
 
     componentWillUnmount(){
-        this.setExactDimensions.cancel();
         window.removeEventListener( "resize", this.setExactDimensions );
+        this.setExactDimensions.cancel();
     }
 }
 
