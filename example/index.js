@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import "style.css";
+import "resizer.style.css";
 
 import Grid from "./Grid";
-
 
 const r = document.createElement( "div" );
 document.body.appendChild( r );

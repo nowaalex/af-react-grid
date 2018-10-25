@@ -2,7 +2,7 @@
   "name": "react-resizable-grid",
   "version": "1.0.0",
   "sideEffects": false,
-  "main": "dist/bundle.esm.js",
+  "main": "dist/bundle.js",
   "module": "dist/bundle.esm.js",
   "repository": "git@github.com:nowaalex/react-resizable-grid.git",
   "author": "alex <nowaalex@gmail.com>",
