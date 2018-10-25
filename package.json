@@ -1,10 +1,19 @@
 {
   "name": "react-resizable-grid",
   "version": "1.0.0",
-  "sideEffects": false,
+  "sideEffects": [ "*.css" ],
   "main": "dist/bundle.js",
   "module": "dist/bundle.esm.js",
   "repository": "git@github.com:nowaalex/react-resizable-grid.git",
+  "bugs": {
+    "url": "https://github.com/nowaalex/react-resizable-grid/issues"
+  },
+  "keywords": [
+    "react",
+    "resizable",
+    "grid",
+    "React resizable grid"    
+  ],
   "author": "alex <nowaalex@gmail.com>",
   "license": "MIT",
   "scripts": {
