@@ -1,17 +1,17 @@
-# react-resizable-grid
+# af-react-grid
 Resizable flexbox grid for React.
 
-[Usage example](https://nowaalex.github.io/react-resizable-grid/example_dist)
+[Usage example](https://nowaalex.github.io/af-react-grid/example_dist)
 
 ## Code example: 
 ```javascript
 /* Include these 2 css files somewhere in your index.js */
-import "react-resizable-grid/dist/style.css";
+import "af-react-grid/dist/style.css";
 
 /* If you want custom resizer style - do not import this file */
-import "react-resizable-grid/dist/resizer.style.css";
+import "af-react-grid/dist/resizer.style.css";
 
-import { Container, Resizer } from "react-resizable-grid";
+import { Container, Resizer } from "af-react-grid";
 
 <Containter type="row">
     <div>Child 1</div>
