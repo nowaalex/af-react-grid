@@ -6,7 +6,10 @@
   ],
   "main": "dist/bundle.js",
   "module": "dist/bundle.esm.js",
-  "repository": "git@github.com:nowaalex/af-react-grid.git",
+  "repository": {
+    "type" : "git",
+    "url" : "git@github.com:nowaalex/af-react-grid.git"
+  },
   "bugs": {
     "url": "https://github.com/nowaalex/af-react-grid/issues"
   },
