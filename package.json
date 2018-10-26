@@ -1,20 +1,21 @@
 {
-  "name": "react-resizable-grid",
+  "name": "af-react-grid",
   "version": "1.0.0",
   "sideEffects": [
     "*.css"
   ],
   "main": "dist/bundle.js",
   "module": "dist/bundle.esm.js",
-  "repository": "git@github.com:nowaalex/react-resizable-grid.git",
+  "repository": "git@github.com:nowaalex/af-react-grid.git",
   "bugs": {
-    "url": "https://github.com/nowaalex/react-resizable-grid/issues"
+    "url": "https://github.com/nowaalex/af-react-grid/issues"
   },
   "keywords": [
     "react",
     "resizable",
     "grid",
-    "React resizable grid"
+    "React resizable grid",
+    "React flex resizable grid"
   ],
   "author": "alex <nowaalex@gmail.com>",
   "license": "MIT",

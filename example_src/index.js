@@ -10,7 +10,7 @@ const App = () => (
     <div>
         <h1>Example grid</h1>
         <p>
-            <a target="_blank" href="https://github.com/nowaalex/react-resizable-grid/tree/master/example_src">Source code of this example</a>
+            <a target="_blank" href="https://github.com/nowaalex/af-react-grid/tree/master/example_src">Source code of this example</a>
         </p>
         <Grid />
     </div>
