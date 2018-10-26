@@ -63,6 +63,7 @@ class Container extends React.Component{
     static propTypes = {
         type:                   PropTypes.oneOf([ "row", "col" ]).isRequired,
         className:              PropTypes.string,
+        style:                  PropTypes.object,
         children:               PropTypes.node,
         resizerChildren:        PropTypes.node,
         resizerClassName:       PropTypes.string

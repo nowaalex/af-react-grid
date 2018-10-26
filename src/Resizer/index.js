@@ -14,9 +14,9 @@ const Resizer = ({
 }) => (
     <DraggableCore onStart={onStart} onDrag={onDrag} disabled={disabled}>
         <div
-            className={className}
             data-resizer-index={index}
             data-resizer-type={type}
+            className={className}
             style={style}
             children={children}
         />
