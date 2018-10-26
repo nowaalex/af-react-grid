@@ -191,8 +191,8 @@ class Container extends React.Component{
         }
 
         if( type === Container ){
-            passProps.resizerClassName = props.resizerClassName || resizerClassName;
-            passProps.resizerChildren = props.resizerChildren || resizerChildren;
+            passProps.resizerClassName = props.resizerClassName === undefined ? resizerClassName : props.resizerClassName;
+            passProps.resizerChildren = props.resizerChildren === undefined ? resizerChildren : props.resizerChildren;
         }
 
         return React.cloneElement( el, passProps );

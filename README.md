@@ -1,7 +1,7 @@
 # react-resizable-grid
 Resizable flexbox grid for React.
 
-Examples: 
+[Usage example](https://nowaalex.github.io/react-resizable-grid/example_dist)
 
 ## Code example: 
 ```
