@@ -4,10 +4,6 @@ import PropTypes from "prop-types";
 import cn from "classnames";
 import Resizer from "../Resizer";
 
-if( process.env.NODE_ENV === "development" && !Element.prototype.closest ){
-    throw new Error( "You must include Element.prototype.closest polyfill for ReactResizableGrid to work" );
-}
-
 const ByType = {
     row: {
         className: "react-rsz-grid-row",
@@ -106,7 +102,7 @@ class Container extends React.Component{
     onStart = e => {
 
         /* If a child would be rendered inside Resizer, event target would not have data-resizer-index attr */
-        const index = this._curRszIndex = +e.target.closest( "[data-resizer-index]" ).dataset.resizerIndex;
+        const index = this._curRszIndex = +e.currentTarget.dataset.resizerIndex;
 
         const { ptr } = ByType[ this.props.type ];
 
