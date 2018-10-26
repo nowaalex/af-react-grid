@@ -19,8 +19,8 @@
   "author": "alex <nowaalex@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "example": "webpack-dev-server --mode=development --config build/webpack/webpack.config.js --open",
-    "build": "rollup --config build/rollup/rollup.config.js"
+    "live": "webpack-dev-server --mode=development --config webpack.config.js --open",
+    "build": "rollup --config rollup.config.js && webpack --mode=production --config webpack.config.js"
   },
   "dependencies": {
     "classnames": "^2.2.6",
@@ -43,6 +43,7 @@
     "babel-loader": "^8.0.4",
     "css-loader": "^1.0.0",
     "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.4",
     "path": "^0.12.7",
     "rollup": "^0.66.6",
     "rollup-copy-plugin": "^0.1.0",

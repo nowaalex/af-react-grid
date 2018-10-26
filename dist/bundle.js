@@ -68,16 +68,17 @@ function _possibleConstructorReturn(e, t) {
 }
 
 var Resizer = function(e) {
-    var t = e.className, r = e.type, n = e.style, i = e.index, o = e.onDrag, a = e.onStart, s = e.disabled;
+    var t = e.className, r = e.type, n = e.style, i = e.index, s = e.onDrag, o = e.onStart, a = e.disabled, c = e.children;
     return React.createElement(reactDraggable.DraggableCore, {
-        onStart: a,
-        onDrag: o,
-        disabled: s
+        onStart: o,
+        onDrag: s,
+        disabled: a
     }, React.createElement("div", {
-        className: t || "react-rsz-grid-default-resizer",
         "data-resizer-index": i,
         "data-resizer-type": r,
-        style: n
+        className: t,
+        style: n,
+        children: c
     }));
 };
 
@@ -86,11 +87,17 @@ Resizer.propTypes = {
     onDrag: PropTypes.func,
     onStart: PropTypes.func,
     index: PropTypes.number,
-    className: PropTypes.oneOfType([ PropTypes.array, PropTypes.string, PropTypes.object ]),
-    baseClassName: PropTypes.oneOfType([ PropTypes.array, PropTypes.string, PropTypes.object ])
+    disabled: PropTypes.bool,
+    children: PropTypes.node,
+    style: PropTypes.object,
+    className: PropTypes.string
 };
 
-var _arguments = arguments, ByType = {
+var _arguments = arguments;
+
+if ("development" === process.env.NODE_ENV && !Element.prototype.closest) throw new Error("You must include Element.prototype.closest polyfill for ReactResizableGrid to work");
+
+var ByType = {
     row: {
         className: "react-rsz-grid-row",
         ptr: "pageX",
@@ -117,51 +124,36 @@ var _arguments = arguments, ByType = {
 }, throttle = function(e, t) {
     var r, n = !1, i = function() {
         return n = !1;
-    }, o = function() {
+    }, s = function() {
         return clearTimeout(r);
-    }, a = function() {
-        n || (e.apply(null, _arguments), n = !0, o(), r = setTimeout(i, t));
+    }, o = function() {
+        n || (e.apply(null, _arguments), n = !0, s(), r = setTimeout(i, t));
     };
-    return a.cancel = o, a;
+    return o.cancel = s, o;
 }, Container = function(e) {
     function t() {
         var e, r;
         _classCallCheck(this, t);
-        for (var n = arguments.length, i = new Array(n), o = 0; o < n; o++) i[o] = arguments[o];
+        for (var n = arguments.length, i = new Array(n), s = 0; s < n; s++) i[s] = arguments[s];
         return (r = _possibleConstructorReturn(this, (e = _getPrototypeOf(t)).call.apply(e, [ this ].concat(i)))).state = {}, 
         r.refsArr = [], r.onStart = function(e) {
-            "development" === process.env.NODE_ENV && console.log("onStart", e);
-            var t = r._curRszIndex = +e.target.getAttribute("data-resizer-index"), n = ByType[r.props.type].ptr;
+            var t = r._curRszIndex = +e.target.closest("[data-resizer-index]").dataset.resizerIndex, n = ByType[r.props.type].ptr;
             r._initPtrPageDist = e[n], r._setInitialDimensionsCache(t - 1, 1), r._setInitialDimensionsCache(t + 1, 2);
             var i = r._curD1 + r._curD2;
             r._maxD1 || (r._maxD1 = i - r._minD2), r._maxD2 || (r._maxD2 = i - r._minD1);
         }, r.onDrag = function(e) {
-            "development" === process.env.NODE_ENV && console.log("onDrag", e);
-            var t = ByType[r.props.type], n = t.ptr, i = t.prop, o = e[n] - r._initPtrPageDist;
+            var t = ByType[r.props.type], n = t.ptr, i = t.prop, s = e[n] - r._initPtrPageDist;
             r.setState(function(e) {
-                return r._getChangedState(e, i, o);
+                return r._getChangedState(e, i, s);
             });
         }, r._getSaveRef = memoizeOneNumericArg(function(e) {
             return function(t) {
-                r.refsArr[e] = t ? ReactDOM.findDOMNode(t) : null;
+                r.refsArr[e] = ReactDOM.findDOMNode(t);
             };
-        }), r.childrenMapper = function(e, t) {
-            if (!e) return e;
-            var n = e.type, i = e.props;
-            if (n === React.Fragment) throw new Error("Fragments are not supported in ResizableFlexGrid right now.");
-            return React.cloneElement(e, n === Resizer ? {
-                index: t,
-                onDrag: r.onDrag,
-                onStart: r.onStart,
-                type: r.props.type
-            } : {
-                style: i.style ? Object.assign({}, i.style, r.state[t]) : r.state[t],
-                ref: r._getSaveRef(t)
-            });
-        }, r._dimensionsStateModifier = function(e, t) {
-            var n = t.type, i = ByType[n], o = i.prop, a = i.dim;
+        }), r._dimensionsStateModifier = function(e, t) {
+            var n = t.type, i = ByType[n], s = i.prop, o = i.dim;
             return r.refsArr.reduce(function(t, r, n) {
-                return r && (t[n] = Object.assign({}, e[n], _defineProperty({}, o, r[a]))), t;
+                return r && (t[n] = Object.assign({}, e[n], _defineProperty({}, s, r[o]))), t;
             }, {});
         }, r.setExactDimensions = throttle(function() {
             return r.setState(r._dimensionsStateModifier);
@@ -170,8 +162,8 @@ var _arguments = arguments, ByType = {
     return _inherits(t, React.Component), _createClass(t, [ {
         key: "_setInitialDimensionsCache",
         value: function(e, t) {
-            var r = this.refsArr[e], n = ByType[this.props.type], i = n.max, o = n.min, a = n.dim, s = getComputedStyle(r);
-            this["_curD" + t] = r[a], this["_minD" + t] = parseInt(s[o], 10) || 0, this["_maxD" + t] = parseInt(s[i], 10) || 0;
+            var r = this.refsArr[e], n = ByType[this.props.type], i = n.max, s = n.min, o = n.dim, a = getComputedStyle(r);
+            this["_curD" + t] = r[o], this["_minD" + t] = parseInt(a[s], 10) || 0, this["_maxD" + t] = parseInt(a[i], 10) || 0;
         }
     }, {
         key: "_getChangedState",
@@ -182,13 +174,35 @@ var _arguments = arguments, ByType = {
             n;
         }
     }, {
+        key: "childrenMapper",
+        value: function(e, r) {
+            if (!e) return e;
+            var n = e.type, i = e.props;
+            if (n === React.Fragment) throw new Error("Fragments are not supported in ResizableFlexGrid right now.");
+            var s = this.props, o = s.resizerClassName, a = s.resizerChildren;
+            if (n === Resizer) return React.cloneElement(e, {
+                index: r,
+                onDrag: this.onDrag,
+                onStart: this.onStart,
+                type: this.props.type,
+                className: i.className || o
+            }, i.children || a);
+            var c = this.state[r], p = {
+                style: i.style ? Object.assign({}, i.style, c) : c,
+                ref: this._getSaveRef(r)
+            };
+            return n === t && (p.resizerClassName = i.resizerClassName || o, p.resizerChildren = i.resizerChildren || a), 
+            React.cloneElement(e, p);
+        }
+    }, {
         key: "render",
         value: function() {
-            var e = this.props, t = e.type, r = e.className, n = e.children, i = e.style;
+            var e = this.props, t = e.type, r = e.className, n = e.children, i = e.style, s = e.forwardedRef;
             return React.createElement("div", {
+                ref: s,
                 style: i,
                 className: cn(r, ByType[t].className),
-                children: React.Children.map(n, this.childrenMapper)
+                children: React.Children.map(n, this.childrenMapper, this)
             });
         }
     }, {
@@ -213,6 +227,10 @@ var _arguments = arguments, ByType = {
 Container.propTypes = {
     type: PropTypes.oneOf([ "row", "col" ]).isRequired,
     className: PropTypes.string,
-    resizerClassName: PropTypes.string,
-    children: PropTypes.node
+    style: PropTypes.object,
+    children: PropTypes.node,
+    resizerChildren: PropTypes.node,
+    resizerClassName: PropTypes.string
+}, Container.defaultProps = {
+    resizerClassName: "react-rsz-grid-default-resizer"
 }, exports.Container = Container, exports.Resizer = Resizer;
