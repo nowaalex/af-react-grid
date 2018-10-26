@@ -4,7 +4,7 @@ Resizable flexbox grid for React.
 [Usage example](https://nowaalex.github.io/react-resizable-grid/example_dist)
 
 ## Code example: 
-```
+```javascript
 /* Include these 2 css files somewhere in your index.js */
 import "react-resizable-grid/dist/style.css";
 
@@ -27,7 +27,7 @@ import { Container, Resizer } from "react-resizable-grid";
 ```
 
 ## Container props
-```
+```javascript
 type: ( "row" | "col" ),
 
 className: ?string,
@@ -45,7 +45,7 @@ resizerClassName: ?string = "react-rsz-grid-default-resizer"
 ```
 
 ## Resizer props
-```
+```javascript
 className: ?string,
 
 style: ?object,
