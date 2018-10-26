@@ -9,14 +9,16 @@ const Resizer = ({
     index,
     onDrag,
     onStart,
-    disabled
+    disabled,
+    children
 }) => (
     <DraggableCore onStart={onStart} onDrag={onDrag} disabled={disabled}>
         <div
-            className={className||"react-rsz-grid-default-resizer"}
+            className={className}
             data-resizer-index={index}
             data-resizer-type={type}
             style={style}
+            children={children}
         />
     </DraggableCore>
 );
@@ -26,16 +28,10 @@ Resizer.propTypes = {
     onDrag: PropTypes.func,
     onStart: PropTypes.func,
     index: PropTypes.number,
-    className: PropTypes.oneOfType([
-        PropTypes.array,
-        PropTypes.string,
-        PropTypes.object
-    ]),
-    baseClassName: PropTypes.oneOfType([
-        PropTypes.array,
-        PropTypes.string,
-        PropTypes.object
-    ])
+    disabled: PropTypes.bool,
+    children: PropTypes.node,
+    style: PropTypes.object,
+    className: PropTypes.string
 }
 
 export default Resizer;

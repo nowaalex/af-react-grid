@@ -40,5 +40,11 @@ module.exports = {
             title: "Examples",
             minify: false
         })
-    ]
+    ],
+    devServer: {
+        watchOptions: {
+            poll: true,
+            aggregateTimeout: 300
+        }
+    }
 }

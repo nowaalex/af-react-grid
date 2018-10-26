@@ -4,6 +4,10 @@ import PropTypes from "prop-types";
 import cn from "classnames";
 import Resizer from "../Resizer";
 
+if( process.env.NODE_ENV === "development" && !Element.prototype.closest ){
+    throw new Error( "You must include Element.prototype.closest polyfill for ReactResizableGrid to work" );
+}
+
 const ByType = {
     row: {
         className: "react-rsz-grid-row",
@@ -59,8 +63,13 @@ class Container extends React.Component{
     static propTypes = {
         type:                   PropTypes.oneOf([ "row", "col" ]).isRequired,
         className:              PropTypes.string,
-        resizerClassName:       PropTypes.string,
         children:               PropTypes.node,
+        resizerChildren:        PropTypes.node,
+        resizerClassName:       PropTypes.string
+    }
+
+    static defaultProps = {
+        resizerClassName: "react-rsz-grid-default-resizer"
     }
 
     state = {}
@@ -95,11 +104,8 @@ class Container extends React.Component{
 
     onStart = e => {
 
-        if( process.env.NODE_ENV === "development" ){
-            console.log( "onStart", e );
-        }
-
-        const index = this._curRszIndex = +e.target.getAttribute( "data-resizer-index" );
+        /* If a child would be rendered inside Resizer, event target would not have data-resizer-index attr */
+        const index = this._curRszIndex = +e.target.closest( "[data-resizer-index]" ).dataset.resizerIndex;
 
         const { ptr } = ByType[ this.props.type ];
 
@@ -135,10 +141,6 @@ class Container extends React.Component{
 
     onDrag = e => {
 
-        if( process.env.NODE_ENV === "development" ){
-            console.log( "onDrag", e );
-        }
-
         const { ptr, prop } = ByType[ this.props.type ];
         const step = e[ ptr ] - this._initPtrPageDist;
 
@@ -150,10 +152,10 @@ class Container extends React.Component{
     }
 
     _getSaveRef = memoizeOneNumericArg( index => node => {
-        this.refsArr[ index ] = node ? ReactDOM.findDOMNode( node ) : null;
+        this.refsArr[ index ] = ReactDOM.findDOMNode( node );
     })
 
-    childrenMapper = ( el, index ) => {
+    childrenMapper( el, index ){
 
         if( !el ){
             return el;
@@ -165,18 +167,34 @@ class Container extends React.Component{
             throw new Error( "Fragments are not supported in ResizableFlexGrid right now." );
         }
 
-        return React.cloneElement( el, type === Resizer ? {
-            index,
-            onDrag: this.onDrag,
-            onStart: this.onStart,
-            type: this.props.type,
-        } : {
+        const { resizerClassName, resizerChildren } = this.props;
+
+        if( type === Resizer ){
+            return React.cloneElement( el, {
+                index,
+                onDrag: this.onDrag,
+                onStart: this.onStart,
+                type: this.props.type,
+                className: props.className || resizerClassName,   
+            }, props.children || resizerChildren );
+        }
+
+        const calculatedElementStyle = this.state[ index ];
+
+        const passProps = {
             style: props.style ? {
                 ...props.style,
-                ...this.state[ index ]
-            } : this.state[ index ],
+                ...calculatedElementStyle
+            } : calculatedElementStyle,
             ref: this._getSaveRef( index )
-        })
+        }
+
+        if( type === Container ){
+            passProps.resizerClassName = props.resizerClassName || resizerClassName;
+            passProps.resizerChildren = props.resizerChildren || resizerChildren;
+        }
+
+        return React.cloneElement( el, passProps );
     }
 
     render(){
@@ -185,14 +203,16 @@ class Container extends React.Component{
             type,
             className,
             children,
-            style
+            style,
+            forwardedRef
         } = this.props;
 
         return (
             <div
+                ref={forwardedRef}
                 style={style}
                 className={cn(className,ByType[type].className)}
-                children={React.Children.map( children, this.childrenMapper )}
+                children={React.Children.map( children, this.childrenMapper, this )}
             />
         )
     }

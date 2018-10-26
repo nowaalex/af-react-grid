@@ -9,7 +9,7 @@ class Grid extends React.Component{
     render(){
         return (
             <div>
-                <Container type="col" style={{ height: "60vh" }}>
+                <Container resizerChildren={<span />} type="col" style={{ height: "60vh" }}>
                     <div style={{ background: "violet" }}>1</div>
                     <Resizer />
                     <Container type="row" style={{ flexGrow: 1 }}>
