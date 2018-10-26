@@ -24,7 +24,7 @@
   "license": "MIT",
   "scripts": {
     "live": "webpack-dev-server --mode=development --config webpack.config.js --open",
-    "build": "rollup --config rollup.config.js && webpack --mode=production --config webpack.config.js"
+    "build": "rollup --config rollup.config.js && webpack --progress --mode=production --config webpack.config.js"
   },
   "dependencies": {
     "classnames": "^2.2.6",
