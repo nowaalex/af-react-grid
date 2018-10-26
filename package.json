@@ -1,14 +1,14 @@
 {
   "name": "af-react-grid",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "sideEffects": [
     "*.css"
   ],
   "main": "dist/bundle.js",
   "module": "dist/bundle.esm.js",
   "repository": {
-    "type" : "git",
-    "url" : "git@github.com:nowaalex/af-react-grid.git"
+    "type": "git",
+    "url": "git@github.com:nowaalex/af-react-grid.git"
   },
   "bugs": {
     "url": "https://github.com/nowaalex/af-react-grid/issues"
