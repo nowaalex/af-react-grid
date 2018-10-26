@@ -191,8 +191,8 @@ var ByType = {
                 style: i.style ? Object.assign({}, i.style, c) : c,
                 ref: this._getSaveRef(r)
             };
-            return n === t && (p.resizerClassName = i.resizerClassName || o, p.resizerChildren = i.resizerChildren || a), 
-            React.cloneElement(e, p);
+            return n === t && (p.resizerClassName = void 0 === i.resizerClassName ? o : i.resizerClassName, 
+            p.resizerChildren = void 0 === i.resizerChildren ? a : i.resizerChildren), React.cloneElement(e, p);
         }
     }, {
         key: "render",

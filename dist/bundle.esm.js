@@ -106,8 +106,8 @@ class l extends t.Component {
             style: r.style ? Object.assign({}, r.style, a) : a,
             ref: this.n(s)
         };
-        return i === l && (c.resizerClassName = r.resizerClassName || o, c.resizerChildren = r.resizerChildren || h), 
-        t.cloneElement(e, c);
+        return i === l && (c.resizerClassName = void 0 === r.resizerClassName ? o : r.resizerClassName, 
+        c.resizerChildren = void 0 === r.resizerChildren ? h : r.resizerChildren), t.cloneElement(e, c);
     }
     render() {
         const {type: e, className: s, children: i, style: n, forwardedRef: h} = this.props;
