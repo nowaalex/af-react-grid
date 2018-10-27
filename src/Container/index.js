@@ -68,7 +68,7 @@ function childrenMapper( el ){
     return React.cloneElement( el, passProps );
 }
 
-class Container extends React.PureComponent{
+class Container extends React.Component{
 
     static propTypes = {
         type:                   PropTypes.oneOf([ "row", "col" ]),
