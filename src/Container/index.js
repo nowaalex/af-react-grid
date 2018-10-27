@@ -205,6 +205,7 @@ class Container extends React.Component{
             style
         } = this.props;
 
+        /* this iterator in childrenMapper to fill refsArr selectively. */
         this._refsArrIterator = 0;
 
         return (
