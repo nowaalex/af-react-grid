@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Resizer component renders correctly 1`] = `
+<div
+  onMouseDown={[Function]}
+  onMouseUp={[Function]}
+  onTouchEnd={[Function]}
+  onTouchStart={[Function]}
+  style={
+    Object {
+      "touchAction": "none",
+    }
+  }
+/>
+`;

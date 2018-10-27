@@ -48,6 +48,8 @@ export default [{
                 properties: {
                     keep_quoted: true,
                     regex: new RegExp([
+                        "_canDrag",
+                        "_refsArrIterator",
                         "_dimensionsStateModifier",
                         "_setInitialDimensionsCache",
                         "_getChangedState",

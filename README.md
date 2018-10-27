@@ -28,7 +28,7 @@ import { Container, Resizer } from "af-react-grid";
 
 ## Container props
 ```javascript
-type: ( "row" | "col" ),
+type: ?( "row" | "col" ) = "row",
 
 className: ?string,
 
@@ -54,3 +54,6 @@ children: ?node
 
 ```
 Resizers are also given data-resizer-index and data-resizer-type, so their styling could be customized easily.
+
+##Tooltips
+* If tou want overflow: auto on containers, you must either set it globally( add overflow rule to default container class ), or individually.

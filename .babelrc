@@ -1,0 +1,13 @@
+{
+    "presets": [ [ "@babel/env", { "modules": false } ], "@babel/react" ],
+    "plugins": [
+        "@babel/plugin-syntax-dynamic-import",
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-transform-runtime"
+    ],
+    "env": {
+        "test": {
+            "presets": [ [ "@babel/env" ], "@babel/react" ]
+        }
+    }
+}

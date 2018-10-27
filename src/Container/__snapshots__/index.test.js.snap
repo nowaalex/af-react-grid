@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Allows rendering of bools, undefined, null and empty strings 1`] = `
+<div
+  className="react-rsz-grid-row"
+/>
+`;
+
+exports[`Empty container renders correctly 1`] = `
+<div
+  className="react-rsz-grid-row"
+/>
+`;

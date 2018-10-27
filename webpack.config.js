@@ -9,32 +9,19 @@ module.exports = {
         filename: "[name].[hash].bundle.js"
     },
     module: {
-        rules: [{
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: {
-                loader: "babel-loader",
-                options: {
-                    presets: [
-                        [ "@babel/preset-env", {
-                            "modules": false
-                        }],
-                        "@babel/preset-react"
-                    ],
-                    plugins: [
-                        "@babel/plugin-syntax-dynamic-import",
-                        "@babel/plugin-proposal-class-properties",
-                        "@babel/plugin-transform-runtime"
-                    ]
-                }
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel-loader"
+            },{
+                test: /\.css$/,
+                use: [
+                    process.env.NODE_ENV === "production" ? MiniCssExtractPlugin.loader : "style-loader",
+                    "css-loader"
+                ]
             }
-        },{
-            test: /\.css$/,
-            use: [
-                process.env.NODE_ENV === "production" ? MiniCssExtractPlugin.loader : "style-loader",
-                "css-loader"
-            ]
-        }]
+        ]
     },
     resolve: {
         modules: [ "node_modules", "src" ]

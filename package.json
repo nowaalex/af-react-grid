@@ -13,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/nowaalex/af-react-grid/issues"
   },
+  "homepage": "github.com:nowaalex/af-react-grid",
   "keywords": [
     "react",
     "resizable",
@@ -23,12 +24,12 @@
   "author": "alex <nowaalex@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "test": "jest",
     "live": "webpack-dev-server --mode=development --config webpack.config.js --open",
     "build": "rollup --config rollup.config.js && webpack --progress --mode=production --config webpack.config.js"
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "jest": "^23.6.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
@@ -44,11 +45,19 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime": "^7.1.2",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
     "css-loader": "^1.0.0",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^23.6.0",
+    "jest-mock-console": "^0.4.0",
     "mini-css-extract-plugin": "^0.4.4",
     "path": "^0.12.7",
+    "react-test-renderer": "^16.6.0",
+    "regenerator-runtime": "^0.12.1",
     "rollup": "^0.66.6",
     "rollup-copy-plugin": "^0.1.0",
     "rollup-plugin-babel": "^4.0.3",

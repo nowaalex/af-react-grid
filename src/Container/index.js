@@ -1,79 +1,62 @@
-import React from "react";
+import React, { Children } from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import cn from "classnames";
 import Resizer from "../Resizer";
 
+import { memoizeOneNumericArg, clamp } from "../utils";
+
 const ByType = {
     row: {
         className: "react-rsz-grid-row",
         ptr: "pageX",
-        dim: "clientWidth",
+        dim: "offsetWidth",
+        clientDim: "clientWidth",
         prop: "width",
         min: "minWidth",
-        max: "maxWidth"
+        max: "maxWidth",
+        minProps: [ "paddingLeft", "paddingRight" ]
     },
     col: {
         className: "react-rsz-grid-col",
         ptr: "pageY",
-        dim: "clientHeight",
+        dim: "offsetHeight",
+        clientDim: "clientHeight",
         prop: "height",
         min: "minHeight",
-        max: "maxHeight"
+        max: "maxHeight",
+        minProps: [ "paddingTop", "paddingBottom" ]
     }
-}
-
-const memoizeOneNumericArg = ( fn, cache = {} ) => arg => cache[ arg ] || ( cache[ arg ] = fn( arg ) );
-
-const clamp = ( num, min, max ) => num > max ? max : num < min ? min : num;
-
-const throttle = ( callback, limit ) => {
-
-    let wait = false;
-    let timer;
-
-    const cancelWait = () => wait = false;
-
-    const clearTimer = () => clearTimeout( timer );
-
-    const invoke = () => {
-
-        if ( wait )
-            return;
-
-        callback.apply( null, arguments );
-        wait = true;
-
-        clearTimer();
-
-        timer = setTimeout( cancelWait, limit );
-    }
-
-    invoke.cancel = clearTimer;
-
-    return invoke;
 }
 
 class Container extends React.Component{
 
     static propTypes = {
-        type:                   PropTypes.oneOf([ "row", "col" ]).isRequired,
+        type:                   PropTypes.oneOf([ "row", "col" ]),
         className:              PropTypes.string,
         style:                  PropTypes.object,
-        children:               PropTypes.node,
+        children: ( props, propName ) => {
+            const arr = Children.toArray( props[ propName ] );
+            if( arr.some( child => React.isValidElement( child ) && ( child.type === React.Fragment || Array.isArray( child ) ) ) ){
+                throw new Error( "Fragments and arrays are not allowed inside Container" );
+            }
+        },
         resizerChildren:        PropTypes.node,
         resizerClassName:       PropTypes.string
     }
 
     static defaultProps = {
+        type: "row",
         resizerClassName: "react-rsz-grid-default-resizer"
     }
 
     state = {}
 
-    /* Initial dimensions caches, used to calculate sizes onDrag */
+    /*  
+        Inner props:
 
-    /*
+        _refsArrIterator;
+        _canDrag;
         _curRszIndex;
         _initPtrPageDist;
         _curD1;
@@ -84,41 +67,65 @@ class Container extends React.Component{
         _maxD2;
     */
 
+    /*
+        Possible refsArr elements:
+            * simple elements( div, span, etc. )
+            * other Containers
+            * components, that treat style property and render single child
+    */
     refsArr = [];
 
-    _setInitialDimensionsCache( elIndex, fieldIndex ){
+    _setInitialDimensionsCache( el, fieldIndex ){
 
-        const el = this.refsArr[ elIndex ];
-
-        const { max, min, dim } = ByType[ this.props.type ];
+        const { type } = this.props;
+        const { max, min, dim, clientDim, minProps } = ByType[ type ];
 
         const obj = getComputedStyle( el );
 
         this[ "_curD" + fieldIndex ] = el[ dim ];
-        this[ "_minD" + fieldIndex ] = parseInt( obj[ min ], 10 ) || 0;
-        this[ "_maxD" + fieldIndex ] = parseInt( obj[ max ], 10 ) || 0;
+
+        /*
+            padding, border and scrollbar ignore width: 0 or height: 0. So we must add them to minProp.
+            padding + border will ignore scrollbar dimensions, so calculting this way: offset - client + padding
+        */
+        const minDist = el[ dim ] - el[ clientDim ] + minProps.reduce(( sum, propName ) => sum + parseFloat( obj[ propName ] ), 0 );
+
+        this[ "_minD" + fieldIndex ] = minDist + ( parseFloat( obj[ min ] ) || 0 );
+        this[ "_maxD" + fieldIndex ] = parseFloat( obj[ max ] ) || 0;
     }
 
     onStart = e => {
 
         /* If a child would be rendered inside Resizer, event target would not have data-resizer-index attr */
         const index = this._curRszIndex = +e.currentTarget.dataset.resizerIndex;
+        
+        const prevElement = this.refsArr[ index - 1 ];
+        const nextElement = this.refsArr[ index ];
 
-        const { ptr } = ByType[ this.props.type ];
+        if( this._canDrag = !!( prevElement && nextElement ) ){
+            /* Can drag only if resizer is not first or last child inside refsArr */
 
-        this._initPtrPageDist = e[ ptr ];
+            const { ptr } = ByType[ this.props.type ];
 
-        this._setInitialDimensionsCache( index - 1, 1 );
-        this._setInitialDimensionsCache( index + 1, 2 );
+            this._initPtrPageDist = e[ ptr ];
+    
+            this._setInitialDimensionsCache( prevElement, 1 );
+            this._setInitialDimensionsCache( nextElement, 2 );
+    
+            const sum = this._curD1 + this._curD2;
+    
+            if( !this._maxD1 ){
+                this._maxD1 = sum - this._minD2; 
+            }
+    
+            if( !this._maxD2 ){
+                this._maxD2 = sum - this._minD1;
+            }
 
-        const sum = this._curD1 + this._curD2;
-
-        if( !this._maxD1 ){
-            this._maxD1 = sum - this._minD2; 
+            this.setExactDimensions()
         }
-
-        if( !this._maxD2 ){
-            this._maxD2 = sum - this._minD1;
+        else if( process.env.NODE_ENV !== "production" ){
+            console.warn( "Resizer must be between other components. It is inactive during this drag." );
         }
     }
 
@@ -129,61 +136,56 @@ class Container extends React.Component{
                 ...curState[ index - 1 ],
                 [prop]: clamp( this._curD1 + step, this._minD1, this._maxD1 )
             },
-            [ index + 1 ]: {
-                ...curState[ index + 1 ],
+            [ index ]: {
+                ...curState[ index ],
                 [prop]: clamp( this._curD2 - step, this._minD2, this._maxD2 )
             }
         };
     }
 
     onDrag = e => {
+        if( this._canDrag ){
 
-        const { ptr, prop } = ByType[ this.props.type ];
-        const step = e[ ptr ] - this._initPtrPageDist;
-
-        this.setState( curState => this._getChangedState(
-            curState,
-            prop,
-            step
-        ));
+            const { ptr, prop } = ByType[ this.props.type ];
+            const step = e[ ptr ] - this._initPtrPageDist;
+    
+            this.setState( curState => this._getChangedState(
+                curState,
+                prop,
+                step
+            ));
+        }
     }
 
     _getSaveRef = memoizeOneNumericArg( index => node => {
         this.refsArr[ index ] = ReactDOM.findDOMNode( node );
     })
 
-    childrenMapper( el, index ){
+    childrenMapper( el ){
 
-        if( !el ){
+        if( !React.isValidElement( el ) ){
             return el;
         }
 
         const { type, props } = el;
 
-        if( type === React.Fragment ){
-            throw new Error( "Fragments are not supported in ResizableFlexGrid right now." );
-        }
-
-        const { resizerClassName, resizerChildren } = this.props;
+        const { resizerClassName, resizerChildren, type: curType } = this.props;
 
         if( type === Resizer ){
             return React.cloneElement( el, {
-                index,
+                index: this._refsArrIterator,
                 onDrag: this.onDrag,
                 onStart: this.onStart,
-                type: this.props.type,
-                className: props.className || resizerClassName,   
+                type: curType,
+                className: props.className || resizerClassName
             }, props.children || resizerChildren );
         }
 
-        const calculatedElementStyle = this.state[ index ];
+        const calculatedElementStyle = this.state[ this._refsArrIterator ];
 
         const passProps = {
-            style: props.style ? {
-                ...props.style,
-                ...calculatedElementStyle
-            } : calculatedElementStyle,
-            ref: this._getSaveRef( index )
+            style: props.style ? { ...props.style, ...calculatedElementStyle } : calculatedElementStyle,
+            ref: this._getSaveRef( this._refsArrIterator++ )
         }
 
         if( type === Container ){
@@ -200,16 +202,16 @@ class Container extends React.Component{
             type,
             className,
             children,
-            style,
-            forwardedRef
+            style
         } = this.props;
+
+        this._refsArrIterator = 0;
 
         return (
             <div
-                ref={forwardedRef}
                 style={style}
                 className={cn(className,ByType[type].className)}
-                children={React.Children.map( children, this.childrenMapper, this )}
+                children={Children.map( children, this.childrenMapper, this )}
             />
         )
     }
@@ -218,18 +220,22 @@ class Container extends React.Component{
         
         const { prop, dim } = ByType[ type ];
 
-        return this.refsArr.reduce(( acc, ref, i ) => {
-            if( ref ){
-                acc[ i ] = {
-                    ...curState[ i ],
-                    [prop]: ref[ dim ]
-                }
-            }
-            return acc;
+        return this.refsArr.reduce(( res, ref, i ) => {
+            res[ i ] = {
+                ...curState[ i ],
+                [prop]: ref[ dim ],
+
+                /* If exact width/height is known, flexBasis may be erased */
+                flexBasis: "auto",
+
+                /* We must take boxSizing into account to render borders, paddings, scrollbars, etc. */
+                boxSizing: "border-box"
+            };
+            return res;
         }, {});
     }
 
-    setExactDimensions = throttle(() => this.setState( this._dimensionsStateModifier ), 150);
+    setExactDimensions = () => this.setState( this._dimensionsStateModifier );
 
     componentDidMount(){
         this.setExactDimensions();
@@ -240,8 +246,8 @@ class Container extends React.Component{
 
         const { children } = this.props;
 
-        const prevChildrenLen = React.Children.count( prevChildren );
-        const curChildrenLen =  React.Children.count( children );
+        const prevChildrenLen = Children.count( prevChildren );
+        const curChildrenLen =  Children.count( children );
 
         if( prevChildrenLen !== curChildrenLen ){
             if( prevChildrenLen > curChildrenLen ){

@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", {
     value: !0
 });
 
-var React = _interopDefault(require("react")), PropTypes = _interopDefault(require("prop-types")), reactDraggable = require("react-draggable"), ReactDOM = _interopDefault(require("react-dom")), cn = _interopDefault(require("classnames"));
+var React = require("react"), React__default = _interopDefault(React), PropTypes = _interopDefault(require("prop-types")), reactDraggable = require("react-draggable"), ReactDOM = _interopDefault(require("react-dom")), cn = _interopDefault(require("classnames"));
 
 function _classCallCheck(e, t) {
     if (!(e instanceof t)) throw new TypeError("Cannot call a class as a function");
@@ -68,12 +68,12 @@ function _possibleConstructorReturn(e, t) {
 }
 
 var Resizer = function(e) {
-    var t = e.className, r = e.type, n = e.style, i = e.index, s = e.onDrag, a = e.onStart, o = e.disabled, c = e.children;
-    return React.createElement(reactDraggable.DraggableCore, {
-        onStart: a,
-        onDrag: s,
+    var t = e.className, r = e.type, n = e.style, i = e.index, a = e.onDrag, s = e.onStart, o = e.disabled, c = e.children;
+    return React__default.createElement(reactDraggable.DraggableCore, {
+        onStart: s,
+        onDrag: a,
         disabled: o
-    }, React.createElement("div", {
+    }, React__default.createElement("div", {
         "data-resizer-index": i,
         "data-resizer-type": r,
         className: t,
@@ -93,109 +93,112 @@ Resizer.propTypes = {
     className: PropTypes.string
 };
 
-var _arguments = arguments, ByType = {
-    row: {
-        className: "react-rsz-grid-row",
-        ptr: "pageX",
-        dim: "clientWidth",
-        prop: "width",
-        min: "minWidth",
-        max: "maxWidth"
-    },
-    col: {
-        className: "react-rsz-grid-col",
-        ptr: "pageY",
-        dim: "clientHeight",
-        prop: "height",
-        min: "minHeight",
-        max: "maxHeight"
-    }
-}, memoizeOneNumericArg = function(e) {
-    var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
+var memoizeOneNumericArg = function(e) {
+    var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : Object.create(null);
     return function(r) {
         return t[r] || (t[r] = e(r));
     };
 }, clamp = function(e, t, r) {
     return e > r ? r : e < t ? t : e;
-}, throttle = function(e, t) {
-    var r, n = !1, i = function() {
-        return n = !1;
-    }, s = function() {
-        return clearTimeout(r);
-    }, a = function() {
-        n || (e.apply(null, _arguments), n = !0, s(), r = setTimeout(i, t));
-    };
-    return a.cancel = s, a;
+}, ByType = {
+    row: {
+        className: "react-rsz-grid-row",
+        ptr: "pageX",
+        dim: "offsetWidth",
+        clientDim: "clientWidth",
+        prop: "width",
+        min: "minWidth",
+        max: "maxWidth",
+        minProps: [ "paddingLeft", "paddingRight" ]
+    },
+    col: {
+        className: "react-rsz-grid-col",
+        ptr: "pageY",
+        dim: "offsetHeight",
+        clientDim: "clientHeight",
+        prop: "height",
+        min: "minHeight",
+        max: "maxHeight",
+        minProps: [ "paddingTop", "paddingBottom" ]
+    }
 }, Container = function(e) {
     function t() {
         var e, r;
         _classCallCheck(this, t);
-        for (var n = arguments.length, i = new Array(n), s = 0; s < n; s++) i[s] = arguments[s];
+        for (var n = arguments.length, i = new Array(n), a = 0; a < n; a++) i[a] = arguments[a];
         return (r = _possibleConstructorReturn(this, (e = _getPrototypeOf(t)).call.apply(e, [ this ].concat(i)))).state = {}, 
         r.refsArr = [], r.onStart = function(e) {
-            var t = r._curRszIndex = +e.currentTarget.dataset.resizerIndex, n = ByType[r.props.type].ptr;
-            r._initPtrPageDist = e[n], r._setInitialDimensionsCache(t - 1, 1), r._setInitialDimensionsCache(t + 1, 2);
-            var i = r._curD1 + r._curD2;
-            r._maxD1 || (r._maxD1 = i - r._minD2), r._maxD2 || (r._maxD2 = i - r._minD1);
+            var t = r._curRszIndex = +e.currentTarget.dataset.resizerIndex, n = r.refsArr[t - 1], i = r.refsArr[t];
+            if (r._canDrag = !(!n || !i)) {
+                var a = ByType[r.props.type].ptr;
+                r._initPtrPageDist = e[a], r._setInitialDimensionsCache(n, 1), r._setInitialDimensionsCache(i, 2);
+                var s = r._curD1 + r._curD2;
+                r._maxD1 || (r._maxD1 = s - r._minD2), r._maxD2 || (r._maxD2 = s - r._minD1), r.setExactDimensions();
+            } else "production" !== process.env.NODE_ENV && console.warn("Resizer must be between other components. It is inactive during this drag.");
         }, r.onDrag = function(e) {
-            var t = ByType[r.props.type], n = t.ptr, i = t.prop, s = e[n] - r._initPtrPageDist;
-            r.setState(function(e) {
-                return r._getChangedState(e, i, s);
-            });
+            if (r._canDrag) {
+                var t = ByType[r.props.type], n = t.ptr, i = t.prop, a = e[n] - r._initPtrPageDist;
+                r.setState(function(e) {
+                    return r._getChangedState(e, i, a);
+                });
+            }
         }, r._getSaveRef = memoizeOneNumericArg(function(e) {
             return function(t) {
                 r.refsArr[e] = ReactDOM.findDOMNode(t);
             };
         }), r._dimensionsStateModifier = function(e, t) {
-            var n = t.type, i = ByType[n], s = i.prop, a = i.dim;
+            var n = t.type, i = ByType[n], a = i.prop, s = i.dim;
             return r.refsArr.reduce(function(t, r, n) {
-                return r && (t[n] = Object.assign({}, e[n], _defineProperty({}, s, r[a]))), t;
+                var i;
+                return t[n] = Object.assign({}, e[n], (_defineProperty(i = {}, a, r[s]), _defineProperty(i, "flexBasis", "auto"), 
+                _defineProperty(i, "boxSizing", "border-box"), i)), t;
             }, {});
-        }, r.setExactDimensions = throttle(function() {
+        }, r.setExactDimensions = function() {
             return r.setState(r._dimensionsStateModifier);
-        }, 150), r;
+        }, r;
     }
-    return _inherits(t, React.Component), _createClass(t, [ {
+    return _inherits(t, React__default.Component), _createClass(t, [ {
         key: "_setInitialDimensionsCache",
         value: function(e, t) {
-            var r = this.refsArr[e], n = ByType[this.props.type], i = n.max, s = n.min, a = n.dim, o = getComputedStyle(r);
-            this["_curD" + t] = r[a], this["_minD" + t] = parseInt(o[s], 10) || 0, this["_maxD" + t] = parseInt(o[i], 10) || 0;
+            var r = this.props.type, n = ByType[r], i = n.max, a = n.min, s = n.dim, o = n.clientDim, c = n.minProps, p = getComputedStyle(e);
+            this["_curD" + t] = e[s];
+            var l = e[s] - e[o] + c.reduce(function(e, t) {
+                return e + parseFloat(p[t]);
+            }, 0);
+            this["_minD" + t] = l + (parseFloat(p[a]) || 0), this["_maxD" + t] = parseFloat(p[i]) || 0;
         }
     }, {
         key: "_getChangedState",
         value: function(e, t, r) {
             var n, i = this._curRszIndex;
             return _defineProperty(n = {}, i - 1, Object.assign({}, e[i - 1], _defineProperty({}, t, clamp(this._curD1 + r, this._minD1, this._maxD1)))), 
-            _defineProperty(n, i + 1, Object.assign({}, e[i + 1], _defineProperty({}, t, clamp(this._curD2 - r, this._minD2, this._maxD2)))), 
+            _defineProperty(n, i, Object.assign({}, e[i], _defineProperty({}, t, clamp(this._curD2 - r, this._minD2, this._maxD2)))), 
             n;
         }
     }, {
         key: "childrenMapper",
-        value: function(e, r) {
-            if (!e) return e;
-            var n = e.type, i = e.props;
-            if (n === React.Fragment) throw new Error("Fragments are not supported in ResizableFlexGrid right now.");
-            var s = this.props, a = s.resizerClassName, o = s.resizerChildren;
-            if (n === Resizer) return React.cloneElement(e, {
-                index: r,
+        value: function(e) {
+            if (!React__default.isValidElement(e)) return e;
+            var r = e.type, n = e.props, i = this.props, a = i.resizerClassName, s = i.resizerChildren, o = i.type;
+            if (r === Resizer) return React__default.cloneElement(e, {
+                index: this._refsArrIterator,
                 onDrag: this.onDrag,
                 onStart: this.onStart,
-                type: this.props.type,
-                className: i.className || a
-            }, i.children || o);
-            var c = this.state[r], p = {
-                style: i.style ? Object.assign({}, i.style, c) : c,
-                ref: this._getSaveRef(r)
+                type: o,
+                className: n.className || a
+            }, n.children || s);
+            var c = this.state[this._refsArrIterator], p = {
+                style: n.style ? Object.assign({}, n.style, c) : c,
+                ref: this._getSaveRef(this._refsArrIterator++)
             };
-            return n === t && (p.resizerClassName = void 0 === i.resizerClassName ? a : i.resizerClassName, 
-            p.resizerChildren = void 0 === i.resizerChildren ? o : i.resizerChildren), React.cloneElement(e, p);
+            return r === t && (p.resizerClassName = void 0 === n.resizerClassName ? a : n.resizerClassName, 
+            p.resizerChildren = void 0 === n.resizerChildren ? s : n.resizerChildren), React__default.cloneElement(e, p);
         }
     }, {
         key: "render",
         value: function() {
-            var e = this.props, t = e.type, r = e.className, n = e.children, i = e.style, s = e.forwardedRef;
-            return React.createElement("div", {
-                ref: s,
+            var e = this.props, t = e.type, r = e.className, n = e.children, i = e.style;
+            return this._refsArrIterator = 0, React__default.createElement("div", {
                 style: i,
                 className: cn(r, ByType[t].className),
                 children: React.Children.map(n, this.childrenMapper, this)
@@ -221,12 +224,17 @@ var _arguments = arguments, ByType = {
 }();
 
 Container.propTypes = {
-    type: PropTypes.oneOf([ "row", "col" ]).isRequired,
+    type: PropTypes.oneOf([ "row", "col" ]),
     className: PropTypes.string,
     style: PropTypes.object,
-    children: PropTypes.node,
+    children: function(e, t) {
+        if (React.Children.toArray(e[t]).some(function(e) {
+            return React__default.isValidElement(e) && (e.type === React__default.Fragment || Array.isArray(e));
+        })) throw new Error("Fragments and arrays are not allowed inside Container");
+    },
     resizerChildren: PropTypes.node,
     resizerClassName: PropTypes.string
 }, Container.defaultProps = {
+    type: "row",
     resizerClassName: "react-rsz-grid-default-resizer"
 }, exports.Container = Container, exports.Resizer = Resizer;
