@@ -65,5 +65,6 @@ Resizers are also given `data-resizer-index` and `data-resizer-type`, so their s
 * `Resizer`, which is first or last child, does nothing( see example )
 
 ## TODO
+* localStorage integration
 * Support `React.Fragment` and `Array` children.
 * Add types
