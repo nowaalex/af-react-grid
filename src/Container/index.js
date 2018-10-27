@@ -242,17 +242,12 @@ class Container extends React.Component{
         window.addEventListener( "resize", this.setExactDimensions );
     }
 
-    componentDidUpdate({ children: prevChildren }){
+    componentDidUpdate(){
+        
+        const diff = this.refsArr.length - this._refsArrIterator;
 
-        const { children } = this.props;
-
-        const prevChildrenLen = Children.count( prevChildren );
-        const curChildrenLen =  Children.count( children );
-
-        if( prevChildrenLen !== curChildrenLen ){
-            if( prevChildrenLen > curChildrenLen ){
-                this.refsArr.splice( curChildrenLen );
-            }
+        if( diff ){
+            this.refsArr.splice( this._refsArrIterator, diff );
             this.setExactDimensions();
         }
     }

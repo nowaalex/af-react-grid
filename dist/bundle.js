@@ -211,9 +211,9 @@ var memoizeOneNumericArg = function(e) {
         }
     }, {
         key: "componentDidUpdate",
-        value: function(e) {
-            var t = e.children, r = this.props.children, n = React.Children.count(t), i = React.Children.count(r);
-            n !== i && (n > i && this.refsArr.splice(i), this.setExactDimensions());
+        value: function() {
+            var e = this.refsArr.length - this._refsArrIterator;
+            e && (this.refsArr.splice(this._refsArrIterator, e), this.setExactDimensions());
         }
     }, {
         key: "componentWillUnmount",

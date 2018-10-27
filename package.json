@@ -1,6 +1,6 @@
 {
   "name": "af-react-grid",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "sideEffects": [
     "*.css"
   ],

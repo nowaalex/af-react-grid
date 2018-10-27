@@ -126,9 +126,9 @@ class d extends t.Component {
     componentDidMount() {
         this.n(), window.addEventListener("resize", this.n);
     }
-    componentDidUpdate({children: t}) {
-        const {children: s} = this.props, e = i.count(t), r = i.count(s);
-        e !== r && (e > r && this.t.splice(r), this.n());
+    componentDidUpdate() {
+        const t = this.t.length - this.d;
+        t && (this.t.splice(this.d, t), this.n());
     }
     componentWillUnmount() {
         window.removeEventListener("resize", this.n), this.n.cancel();
