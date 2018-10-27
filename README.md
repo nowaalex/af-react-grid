@@ -1,5 +1,5 @@
 # af-react-grid
-Resizable flexbox grid for React.
+Resizable and customizable flexbox grid for React.
 
 [Usage example](https://nowaalex.github.io/af-react-grid/example_dist)
 
@@ -52,8 +52,16 @@ style: ?object,
 
 children: ?node
 
-```
-Resizers are also given data-resizer-index and data-resizer-type, so their styling could be customized easily.
+disabled: ?bool
 
-##Tooltips
-* If tou want overflow: auto on containers, you must either set it globally( add overflow rule to default container class ), or individually.
+```
+Resizers are also given `data-resizer-index` and `data-resizer-type`, so their styling could be customized easily.
+
+## Tooltips
+* If tou want `overflow: auto` on containers, you must either set it globally( add overflow rule to default container class ), or individually.
+* Want to have a super-highly customized `Resizer`? `resizerChildren` prop allows you to render custom child elements, which could be easily styled.
+* `React.Fragment` and `Array` children are not yet supported
+* `Resizer`, which is first or last child, does nothing( see example )
+
+## ToDo
+* Support `React.Fragment` and `Array` children.
