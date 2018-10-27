@@ -1,5 +1,5 @@
 import React from "react";
-import Container from "../Container";
+import {Container } from "../Container";
 import renderer from "react-test-renderer";
 import mockConsole from "jest-mock-console";
 
