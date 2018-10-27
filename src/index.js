@@ -1,7 +1,2 @@
-import Container from "./Container";
-import Resizer from "./Resizer";
-
-export {
-    Container,
-    Resizer
-}
+export { Resizer } from "./Resizer";
+export { Container, PureContainer } from "./Container";

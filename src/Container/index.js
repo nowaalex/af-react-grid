@@ -68,7 +68,7 @@ function childrenMapper( el ){
     return React.cloneElement( el, passProps );
 }
 
-class Container extends React.Component{
+const getComponent = BaseClass => class extends BaseClass{
 
     static propTypes = {
         type:                   PropTypes.oneOf([ "row", "col" ]),
@@ -198,7 +198,7 @@ class Container extends React.Component{
 
     _getSaveRef = memoizeOneNumericArg( index => node => {
         this.refsArr[ index ] = ReactDOM.findDOMNode( node );
-    })
+    });
 
     
 
@@ -264,4 +264,5 @@ class Container extends React.Component{
     }
 }
 
-export default Container;
+export const Container = getComponent( React.Component );
+export const PureContainer = getComponent( React.PureComponent );
