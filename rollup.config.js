@@ -34,6 +34,7 @@ export default [{
             presets: [ "@babel/preset-react" ],
             plugins: [
                 "@babel/plugin-external-helpers",
+                "@babel/plugin-proposal-do-expressions",
                 [ "@babel/plugin-proposal-class-properties", { loose: true }],
                 [ "@babel/plugin-proposal-object-rest-spread", { loose: true, useBuiltIns: true }]
             ]
@@ -94,16 +95,7 @@ export default [{
             browser: true,
             preferBuiltins: false
         }),
-        babel({
-            babelrc: false,
-            externalHelpers: true,
-            presets: [ "@babel/preset-react", "@babel/preset-env" ],
-            plugins: [
-                "@babel/plugin-external-helpers",
-                [ "@babel/plugin-proposal-class-properties", { loose: true }],
-                [ "@babel/plugin-proposal-object-rest-spread", { loose: true, useBuiltIns: true }]
-            ]
-        }),
+        babel(),
         terser({
             ecma: 6,
             output: {

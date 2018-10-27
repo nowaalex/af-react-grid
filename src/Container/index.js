@@ -57,14 +57,18 @@ function childrenMapper( el ){
     }
 
     if( type === Container ){
-        passProps.resizerClassName = props.resizerClassName === undefined ? resizerClassName : props.resizerClassName;
-        passProps.resizerChildren = props.resizerChildren === undefined ? resizerChildren : props.resizerChildren;
+        if( props.resizerClassName === undefined ){
+            passProps.resizerClassName = resizerClassName;
+        }
+        if( props.resizerChildren === undefined ){
+            passProps.resizerChildren = resizerChildren;
+        }
     }
 
     return React.cloneElement( el, passProps );
 }
 
-class Container extends React.Component{
+class Container extends React.PureComponent{
 
     static propTypes = {
         type:                   PropTypes.oneOf([ "row", "col" ]),

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { DraggableCore } from "react-draggable";
 
-const Resizer = ({
+const Resizer = React.memo(({
     className,
     type,
     style,
@@ -21,7 +21,7 @@ const Resizer = ({
             children={children}
         />
     </DraggableCore>
-);
+));
 
 Resizer.propTypes = {
     type: PropTypes.oneOf([ "row", "col" ]),
