@@ -8,25 +8,60 @@ import { memoizeOneNumericArg, clamp } from "../utils";
 
 const ByType = {
     row: {
-        className: "react-rsz-grid-row",
-        ptr: "pageX",
-        dim: "offsetWidth",
+        colClassName: "react-rsz-grid-row",
+        cursorPropName: "pageX",
+        offsetDim: "offsetWidth",
         clientDim: "clientWidth",
-        prop: "width",
-        min: "minWidth",
-        max: "maxWidth",
-        minProps: [ "paddingLeft", "paddingRight" ]
+        cssSizeProp: "width",
+        minDim: "minWidth",
+        maxDim: "maxWidth",
+        minProps: [ "Left", "Right" ]
     },
     col: {
-        className: "react-rsz-grid-col",
-        ptr: "pageY",
-        dim: "offsetHeight",
+        colClassName: "react-rsz-grid-col",
+        cursorPropName: "pageY",
+        offsetDim: "offsetHeight",
         clientDim: "clientHeight",
-        prop: "height",
-        min: "minHeight",
-        max: "maxHeight",
-        minProps: [ "paddingTop", "paddingBottom" ]
+        cssSizeProp: "height",
+        minDim: "minHeight",
+        maxDim: "maxHeight",
+        minProps: [ "Top", "Bottom" ]
     }
+}
+
+function childrenMapper( el ){
+
+    if( !React.isValidElement( el ) ){
+        return el;
+    }
+
+    const { type, props } = el;
+
+    const { resizerClassName, resizerChildren, type: curType } = this.props;
+
+    if( type === Resizer ){
+        return React.cloneElement( el, {
+            index: this._refsArrIterator,
+            onDrag: this.dragHandler,
+            onStart: this.dragStartHandler,
+            type: curType,
+            className: props.className || resizerClassName
+        }, props.children || resizerChildren );
+    }
+
+    const calculatedElementStyle = this.state[ this._refsArrIterator ];
+
+    const passProps = {
+        style: props.style ? { ...props.style, ...calculatedElementStyle } : calculatedElementStyle,
+        ref: this._getSaveRef( this._refsArrIterator++ )
+    }
+
+    if( type === Container ){
+        passProps.resizerClassName = props.resizerClassName === undefined ? resizerClassName : props.resizerClassName;
+        passProps.resizerChildren = props.resizerChildren === undefined ? resizerChildren : props.resizerChildren;
+    }
+
+    return React.cloneElement( el, passProps );
 }
 
 class Container extends React.Component{
@@ -78,23 +113,23 @@ class Container extends React.Component{
     _setInitialDimensionsCache( el, fieldIndex ){
 
         const { type } = this.props;
-        const { max, min, dim, clientDim, minProps } = ByType[ type ];
+        const { maxDim, minDim, offsetDim, clientDim, minProps } = ByType[ type ];
 
         const obj = getComputedStyle( el );
 
-        this[ "_curD" + fieldIndex ] = el[ dim ];
+        const d = this[ "_curD" + fieldIndex ] = el[ offsetDim ];
 
         /*
             padding, border and scrollbar ignore width: 0 or height: 0. So we must add them to minProp.
             padding + border will ignore scrollbar dimensions, so calculting this way: offset - client + padding
         */
-        const minDist = el[ dim ] - el[ clientDim ] + minProps.reduce(( sum, propName ) => sum + parseFloat( obj[ propName ] ), 0 );
+        const minDist = d - el[ clientDim ] + minProps.reduce(( sum, propName ) => sum + parseFloat( obj[ `padding${propName}` ] ), 0 );
 
-        this[ "_minD" + fieldIndex ] = minDist + ( parseFloat( obj[ min ] ) || 0 );
-        this[ "_maxD" + fieldIndex ] = parseFloat( obj[ max ] ) || 0;
+        this[ "_minD" + fieldIndex ] = minDist + ( parseFloat( obj[ minDim ] ) || 0 );
+        this[ "_maxD" + fieldIndex ] = parseFloat( obj[ maxDim ] ) || 0;
     }
 
-    onStart = e => {
+    dragStartHandler = e => {
 
         /* If a child would be rendered inside Resizer, event target would not have data-resizer-index attr */
         const index = this._curRszIndex = +e.currentTarget.dataset.resizerIndex;
@@ -105,9 +140,9 @@ class Container extends React.Component{
         if( this._canDrag = !!( prevElement && nextElement ) ){
             /* Can drag only if resizer is not first or last child inside refsArr */
 
-            const { ptr } = ByType[ this.props.type ];
+            const { cursorPropName } = ByType[ this.props.type ];
 
-            this._initPtrPageDist = e[ ptr ];
+            this._initPtrPageDist = e[ cursorPropName ];
     
             this._setInitialDimensionsCache( prevElement, 1 );
             this._setInitialDimensionsCache( nextElement, 2 );
@@ -129,29 +164,29 @@ class Container extends React.Component{
         }
     }
 
-    _getChangedState( curState, prop, step ){
+    _getChangedState( curState, cssSizeProp, step ){
         const index = this._curRszIndex;
         return {
             [ index - 1 ]: {
                 ...curState[ index - 1 ],
-                [prop]: clamp( this._curD1 + step, this._minD1, this._maxD1 )
+                [cssSizeProp]: clamp( this._curD1 + step, this._minD1, this._maxD1 )
             },
             [ index ]: {
                 ...curState[ index ],
-                [prop]: clamp( this._curD2 - step, this._minD2, this._maxD2 )
+                [cssSizeProp]: clamp( this._curD2 - step, this._minD2, this._maxD2 )
             }
         };
     }
 
-    onDrag = e => {
+    dragHandler = e => {
         if( this._canDrag ){
 
-            const { ptr, prop } = ByType[ this.props.type ];
-            const step = e[ ptr ] - this._initPtrPageDist;
+            const { cursorPropName, cssSizeProp } = ByType[ this.props.type ];
+            const step = e[ cursorPropName ] - this._initPtrPageDist;
     
             this.setState( curState => this._getChangedState(
                 curState,
-                prop,
+                cssSizeProp,
                 step
             ));
         }
@@ -161,40 +196,7 @@ class Container extends React.Component{
         this.refsArr[ index ] = ReactDOM.findDOMNode( node );
     })
 
-    childrenMapper( el ){
-
-        if( !React.isValidElement( el ) ){
-            return el;
-        }
-
-        const { type, props } = el;
-
-        const { resizerClassName, resizerChildren, type: curType } = this.props;
-
-        if( type === Resizer ){
-            return React.cloneElement( el, {
-                index: this._refsArrIterator,
-                onDrag: this.onDrag,
-                onStart: this.onStart,
-                type: curType,
-                className: props.className || resizerClassName
-            }, props.children || resizerChildren );
-        }
-
-        const calculatedElementStyle = this.state[ this._refsArrIterator ];
-
-        const passProps = {
-            style: props.style ? { ...props.style, ...calculatedElementStyle } : calculatedElementStyle,
-            ref: this._getSaveRef( this._refsArrIterator++ )
-        }
-
-        if( type === Container ){
-            passProps.resizerClassName = props.resizerClassName === undefined ? resizerClassName : props.resizerClassName;
-            passProps.resizerChildren = props.resizerChildren === undefined ? resizerChildren : props.resizerChildren;
-        }
-
-        return React.cloneElement( el, passProps );
-    }
+    
 
     render(){
 
@@ -205,26 +207,26 @@ class Container extends React.Component{
             style
         } = this.props;
 
-        /* this iterator in childrenMapper to fill refsArr selectively. */
+        /* this iterator is used and incremented in childrenMapper to fill refsArr selectively. */
         this._refsArrIterator = 0;
 
         return (
             <div
                 style={style}
-                className={cn(className,ByType[type].className)}
-                children={Children.map( children, this.childrenMapper, this )}
+                className={cn(className,ByType[type].colClassName)}
+                children={Children.map( children, childrenMapper, this )}
             />
         )
     }
 
     _dimensionsStateModifier = ( curState, { type } ) => {
         
-        const { prop, dim } = ByType[ type ];
+        const { cssSizeProp, offsetDim } = ByType[ type ];
 
         return this.refsArr.reduce(( res, ref, i ) => {
             res[ i ] = {
                 ...curState[ i ],
-                [prop]: ref[ dim ],
+                [cssSizeProp]: ref[ offsetDim ],
 
                 /* If exact width/height is known, flexBasis may be erased */
                 flexBasis: "auto",
@@ -239,7 +241,7 @@ class Container extends React.Component{
     setExactDimensions = () => this.setState( this._dimensionsStateModifier );
 
     componentDidMount(){
-        this.setExactDimensions();
+        this._st = setTimeout( this.setExactDimensions, 50 );
         window.addEventListener( "resize", this.setExactDimensions );
     }
 
@@ -249,13 +251,12 @@ class Container extends React.Component{
 
         if( diff ){
             this.refsArr.splice( this._refsArrIterator, diff );
-            this.setExactDimensions();
         }
     }
 
     componentWillUnmount(){
         window.removeEventListener( "resize", this.setExactDimensions );
-        this.setExactDimensions.cancel();
+        clearTimeout( this._st );
     }
 }
 

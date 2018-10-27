@@ -1,152 +1,151 @@
-import t, { Children as i } from "react";
+import t, { Children as s } from "react";
 
-import s from "prop-types";
+import i from "prop-types";
 
 import { DraggableCore as e } from "react-draggable";
 
 import r from "react-dom";
 
-import n from "classnames";
+import o from "classnames";
 
-const o = ({className: i, type: s, style: r, index: n, onDrag: o, onStart: h, disabled: a, children: c}) => t.createElement(e, {
+const n = ({className: s, type: i, style: r, index: o, onDrag: n, onStart: h, disabled: a, children: c}) => t.createElement(e, {
     onStart: h,
-    onDrag: o,
+    onDrag: n,
     disabled: a
 }, t.createElement("div", {
-    "data-resizer-index": n,
-    "data-resizer-type": s,
-    className: i,
+    "data-resizer-index": o,
+    "data-resizer-type": i,
+    className: s,
     style: r,
     children: c
 }));
 
-o.propTypes = {
-    type: s.oneOf([ "row", "col" ]),
-    onDrag: s.func,
-    onStart: s.func,
-    index: s.number,
-    disabled: s.bool,
-    children: s.node,
-    style: s.object,
-    className: s.string
+n.propTypes = {
+    type: i.oneOf([ "row", "col" ]),
+    onDrag: i.func,
+    onStart: i.func,
+    index: i.number,
+    disabled: i.bool,
+    children: i.node,
+    style: i.object,
+    className: i.string
 };
 
-const h = (t, i = Object.create(null)) => s => i[s] || (i[s] = t(s)), a = (t, i, s) => t > s ? s : t < i ? i : t, c = {
+const h = (t, s = Object.create(null)) => i => s[i] || (s[i] = t(i)), a = (t, s, i) => t > i ? i : t < s ? s : t, c = {
     row: {
-        className: "react-rsz-grid-row",
-        ptr: "pageX",
-        dim: "offsetWidth",
-        clientDim: "clientWidth",
-        prop: "width",
-        min: "minWidth",
-        max: "maxWidth",
-        minProps: [ "paddingLeft", "paddingRight" ]
+        t: "react-rsz-grid-row",
+        s: "pageX",
+        i: "offsetWidth",
+        e: "clientWidth",
+        r: "width",
+        o: "minWidth",
+        n: "maxWidth",
+        h: [ "Left", "Right" ]
     },
     col: {
-        className: "react-rsz-grid-col",
-        ptr: "pageY",
-        dim: "offsetHeight",
-        clientDim: "clientHeight",
-        prop: "height",
-        min: "minHeight",
-        max: "maxHeight",
-        minProps: [ "paddingTop", "paddingBottom" ]
+        t: "react-rsz-grid-col",
+        s: "pageY",
+        i: "offsetHeight",
+        e: "clientHeight",
+        r: "height",
+        o: "minHeight",
+        n: "maxHeight",
+        h: [ "Top", "Bottom" ]
     }
 };
 
-class d extends t.Component {
+function m(s) {
+    if (!t.isValidElement(s)) return s;
+    const {type: i, props: e} = s, {resizerClassName: r, resizerChildren: o, type: h} = this.props;
+    if (i === n) return t.cloneElement(s, {
+        index: this.a,
+        onDrag: this.c,
+        onStart: this.m,
+        type: h,
+        className: e.className || r
+    }, e.children || o);
+    const a = this.state[this.a], c = {
+        style: e.style ? Object.assign({}, e.style, a) : a,
+        ref: this.l(this.a++)
+    };
+    return i === l && (c.resizerClassName = void 0 === e.resizerClassName ? r : e.resizerClassName, 
+    c.resizerChildren = void 0 === e.resizerChildren ? o : e.resizerChildren), t.cloneElement(s, c);
+}
+
+class l extends t.Component {
     constructor(...t) {
-        super(...t), this.state = {}, this.t = [], this.onStart = (t => {
-            const i = this.i = +t.currentTarget.dataset.resizerIndex, s = this.t[i - 1], e = this.t[i];
-            if (this.s = !(!s || !e)) {
-                const {ptr: i} = c[this.props.type];
-                this.e = t[i], this.r(s, 1), this.r(e, 2);
+        super(...t), this.state = {}, this.d = [], this.m = (t => {
+            const s = this.p = +t.currentTarget.dataset.resizerIndex, i = this.d[s - 1], e = this.d[s];
+            if (this.f = !(!i || !e)) {
+                const {s} = c[this.props.type];
+                this.g = t[s], this.u(i, 1), this.u(e, 2);
                 const r = this._curD1 + this._curD2;
                 this._maxD1 || (this._maxD1 = r - this._minD2), this._maxD2 || (this._maxD2 = r - this._minD1), 
-                this.n();
+                this.D();
             } else "production" !== process.env.NODE_ENV && console.warn("Resizer must be between other components. It is inactive during this drag.");
-        }), this.onDrag = (t => {
-            if (this.s) {
-                const {ptr: i, prop: s} = c[this.props.type], e = t[i] - this.e;
-                this.setState(t => this.o(t, s, e));
+        }), this.c = (t => {
+            if (this.f) {
+                const {s, r: i} = c[this.props.type], e = t[s] - this.g;
+                this.setState(t => this.y(t, i, e));
             }
-        }), this.h = h(t => i => {
-            this.t[t] = r.findDOMNode(i);
-        }), this.a = ((t, {type: i}) => {
-            const {prop: s, dim: e} = c[i];
-            return this.t.reduce((i, r, n) => (i[n] = Object.assign({}, t[n], {
-                [s]: r[e],
+        }), this.l = h(t => s => {
+            this.d[t] = r.findDOMNode(s);
+        }), this.z = ((t, {type: s}) => {
+            const {r: i, i: e} = c[s];
+            return this.d.reduce((s, r, o) => (s[o] = Object.assign({}, t[o], {
+                [i]: r[e],
                 flexBasis: "auto",
                 boxSizing: "border-box"
-            }), i), {});
-        }), this.n = (() => this.setState(this.a));
+            }), s), {});
+        }), this.D = (() => this.setState(this.z));
     }
-    r(t, i) {
-        const {type: s} = this.props, {max: e, min: r, dim: n, clientDim: o, minProps: h} = c[s], a = getComputedStyle(t);
-        this["_curD" + i] = t[n];
-        const d = t[n] - t[o] + h.reduce((t, i) => t + parseFloat(a[i]), 0);
-        this["_minD" + i] = d + (parseFloat(a[r]) || 0), this["_maxD" + i] = parseFloat(a[e]) || 0;
+    u(t, s) {
+        const {type: i} = this.props, {n: e, o: r, i: o, e: n, h} = c[i], a = getComputedStyle(t), m = (this["_curD" + s] = t[o]) - t[n] + h.reduce((t, s) => t + parseFloat(a[`padding${s}`]), 0);
+        this["_minD" + s] = m + (parseFloat(a[r]) || 0), this["_maxD" + s] = parseFloat(a[e]) || 0;
     }
-    o(t, i, s) {
-        const e = this.i;
+    y(t, s, i) {
+        const e = this.p;
         return {
             [e - 1]: Object.assign({}, t[e - 1], {
-                [i]: a(this._curD1 + s, this._minD1, this._maxD1)
+                [s]: a(this._curD1 + i, this._minD1, this._maxD1)
             }),
             [e]: Object.assign({}, t[e], {
-                [i]: a(this._curD2 - s, this._minD2, this._maxD2)
+                [s]: a(this._curD2 - i, this._minD2, this._maxD2)
             })
         };
     }
-    c(i) {
-        if (!t.isValidElement(i)) return i;
-        const {type: s, props: e} = i, {resizerClassName: r, resizerChildren: n, type: h} = this.props;
-        if (s === o) return t.cloneElement(i, {
-            index: this.d,
-            onDrag: this.onDrag,
-            onStart: this.onStart,
-            type: h,
-            className: e.className || r
-        }, e.children || n);
-        const a = this.state[this.d], c = {
-            style: e.style ? Object.assign({}, e.style, a) : a,
-            ref: this.h(this.d++)
-        };
-        return s === d && (c.resizerClassName = void 0 === e.resizerClassName ? r : e.resizerClassName, 
-        c.resizerChildren = void 0 === e.resizerChildren ? n : e.resizerChildren), t.cloneElement(i, c);
-    }
     render() {
-        const {type: s, className: e, children: r, style: o} = this.props;
-        return this.d = 0, t.createElement("div", {
-            style: o,
-            className: n(e, c[s].className),
-            children: i.map(r, this.c, this)
+        const {type: i, className: e, children: r, style: n} = this.props;
+        return this.a = 0, t.createElement("div", {
+            style: n,
+            className: o(e, c[i].t),
+            children: s.map(r, m, this)
         });
     }
     componentDidMount() {
-        this.n(), window.addEventListener("resize", this.n);
+        this._st = setTimeout(this.D, 50), window.addEventListener("resize", this.D);
     }
     componentDidUpdate() {
-        const t = this.t.length - this.d;
-        t && (this.t.splice(this.d, t), this.n());
+        const t = this.d.length - this.a;
+        t && this.d.splice(this.a, t);
     }
     componentWillUnmount() {
-        window.removeEventListener("resize", this.n), this.n.cancel();
+        window.removeEventListener("resize", this.D), clearTimeout(this._st);
     }
 }
 
-d.propTypes = {
-    type: s.oneOf([ "row", "col" ]),
-    className: s.string,
-    style: s.object,
-    children: (s, e) => {
-        if (i.toArray(s[e]).some(i => t.isValidElement(i) && (i.type === t.Fragment || Array.isArray(i)))) throw new Error("Fragments and arrays are not allowed inside Container");
+l.propTypes = {
+    type: i.oneOf([ "row", "col" ]),
+    className: i.string,
+    style: i.object,
+    children: (i, e) => {
+        if (s.toArray(i[e]).some(s => t.isValidElement(s) && (s.type === t.Fragment || Array.isArray(s)))) throw new Error("Fragments and arrays are not allowed inside Container");
     },
-    resizerChildren: s.node,
-    resizerClassName: s.string
-}, d.defaultProps = {
+    resizerChildren: i.node,
+    resizerClassName: i.string
+}, l.defaultProps = {
     type: "row",
     resizerClassName: "react-rsz-grid-default-resizer"
 };
 
-export { d as Container, o as Resizer };
+export { l as Container, n as Resizer };
