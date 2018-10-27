@@ -1,7 +1,8 @@
 # af-react-grid
 Resizable and customizable flexbox grid for React.
-
 [Usage example](https://nowaalex.github.io/af-react-grid/example_dist)
+
+![Demo image](https://i.postimg.cc/8z2tj91T/aaa.gif)
 
 ## Code example: 
 ```javascript
@@ -63,5 +64,6 @@ Resizers are also given `data-resizer-index` and `data-resizer-type`, so their s
 * `React.Fragment` and `Array` children are not yet supported
 * `Resizer`, which is first or last child, does nothing( see example )
 
-## ToDo
+## TODO
 * Support `React.Fragment` and `Array` children.
+* Add types
