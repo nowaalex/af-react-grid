@@ -21,6 +21,7 @@ switch( process.argv[ 2 ] ){
             POST_CMDS.forEach( cmd => {
                 
                 try{
+                    console.log( `Running: ${cmd}` );
                     execSync( cmd, { stdio: [ 0, 1, 2 ] } );
                 }
                 catch( e ){
