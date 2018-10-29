@@ -29,6 +29,8 @@ const ByType = {
     }
 }
 
+const getCorrectProperty = ( obj, prop, fallbackProp ) => obj.hasOwnProperty( prop ) ? obj[ prop ] : fallbackProp;
+
 function childrenMapper( el ){
 
     if( !React.isValidElement( el ) ){
@@ -37,7 +39,10 @@ function childrenMapper( el ){
 
     const { type, props } = el;
 
-    const { resizerClassName, resizerChildren, type: curType } = this.props;
+    const { resizerChildren, type: curType } = this.props;
+
+    /* If we just use defaultProps, resizerClassName will not be passed down to nested Containers proprly */
+    const realResizerClassName = getCorrectProperty( this.props, "resizerClassName", "react-rsz-grid-default-resizer" );
 
     if( type === Resizer ){
         return React.cloneElement( el, {
@@ -45,8 +50,8 @@ function childrenMapper( el ){
             onDrag: this.dragHandler,
             onStart: this.dragStartHandler,
             type: curType,
-            className: props.className || resizerClassName
-        }, props.children || resizerChildren );
+            className: getCorrectProperty( props, "className", realResizerClassName )
+        }, getCorrectProperty( props, "children", resizerChildren ) );
     }
 
     const calculatedElementStyle = this.state[ this._refsArrIterator ];
@@ -57,18 +62,15 @@ function childrenMapper( el ){
     }
 
     if( type === Container ){
-        if( props.resizerClassName === undefined ){
-            passProps.resizerClassName = resizerClassName;
-        }
-        if( props.resizerChildren === undefined ){
-            passProps.resizerChildren = resizerChildren;
-        }
+        /* We sacrifice performance in order to make code more compact here */
+        passProps.resizerClassName = getCorrectProperty( props, "resizerClassName", realResizerClassName );
+        passProps.resizerChildren = getCorrectProperty( props, "resizerChildren", resizerChildren );
     }
 
     return React.cloneElement( el, passProps );
 }
 
-const getComponent = BaseClass => class extends BaseClass{
+class Container extends React.Component{
 
     static propTypes = {
         type:                   PropTypes.oneOf([ "row", "col" ]),
@@ -85,8 +87,7 @@ const getComponent = BaseClass => class extends BaseClass{
     }
 
     static defaultProps = {
-        type: "row",
-        resizerClassName: "react-rsz-grid-default-resizer"
+        type: "row"
     }
 
     state = {}
@@ -254,6 +255,10 @@ const getComponent = BaseClass => class extends BaseClass{
         const diff = this.refsArr.length - this._refsArrIterator;
 
         if( diff ){
+            /*
+                If children quantity decreased, refsArr must be shortened.
+                splice is faster than slice ( jsperf ), so using it.
+            */
             this.refsArr.splice( this._refsArrIterator, diff );
         }
     }
@@ -264,5 +269,4 @@ const getComponent = BaseClass => class extends BaseClass{
     }
 }
 
-export const Container = getComponent( React.Component );
-export const PureContainer = getComponent( React.PureComponent );
+export default Container;

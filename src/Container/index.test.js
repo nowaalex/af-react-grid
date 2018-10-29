@@ -1,14 +1,12 @@
 import React from "react";
-import {Container } from "../Container";
+import Container from "../Container";
 import renderer from "react-test-renderer";
 import mockConsole from "jest-mock-console";
 
 test( "Empty container renders correctly", () => {
 
     const component = renderer.create(
-        <React.Fragment>
-            <Container />
-        </React.Fragment>
+        <Container />
     );
 
     let tree = component.toJSON();
@@ -75,4 +73,4 @@ test( "React isValidElement does not accept Fragments, strings, numbers, nulls, 
         false,
         undefined
     ].some( React.isValidElement )).toBeFalsy();
-})
+});
