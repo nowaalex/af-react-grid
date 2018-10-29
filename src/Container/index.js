@@ -207,7 +207,7 @@ class Container extends React.Component{
             if( !__JEST__ ){
                 /* I don't know how to mock refs instanceof in jest, so.... */
                 console.error(
-                    "af-react-grid: can't find ref for:", node,
+                    "af-react-grid: can't find ref for component:", node,
                     "ReactDOM.findDomNode must return element for all children of Container."
                 );
             }
