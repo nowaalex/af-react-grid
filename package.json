@@ -9,7 +9,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "yarn test",
-      "post-commit": "npm-run-all -s test build \"git add dist example_dist\" \"git commit --amend\"",
+      "post-commit": "npm-run-all -s test build \"git add dist .\" \"git commit --amend\"",
       "pre-push": "yarn test"
     }
   },
@@ -35,7 +35,8 @@
     "live": "webpack-dev-server --mode=development --config webpack.config.js --open",
     "build:library": "rollup --config rollup.config.js",
     "build:examples": "webpack --progress --mode=production --config webpack.config.js",
-    "build": "npm-run-all -s build:library build:examples"
+    "build": "npm-run-all -s build:library build:examples",
+    "git:add:build": "npm"
   },
   "dependencies": {
     "classnames": "^2.2.6",
