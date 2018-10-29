@@ -8,7 +8,7 @@
   "module": "dist/bundle.esm.js",
   "husky": {
     "hooks": {
-      "pre-commit": "yarn test",
+      "pre-commit": "yarn test && yarn build",
       "pre-push": "yarn test"
     }
   },
