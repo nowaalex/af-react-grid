@@ -35,9 +35,7 @@
     "live": "webpack-dev-server --mode=development --config webpack.config.js --open",
     "build:library": "rollup --config rollup.config.js",
     "build:examples": "webpack --progress --mode=production --config webpack.config.js",
-    "build": "npm-run-all -s build:library build:examples",
-    "git:add:build": "git add dist/ example_dist/",
-    "git:amend": "git commit --amend -C HEAD --no-verify"
+    "build": "npm-run-all -s build:library build:examples"
   },
   "dependencies": {
     "classnames": "^2.2.6",
