@@ -3,6 +3,37 @@ import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import copy from "rollup-copy-plugin";
 
+const MANGLE_REGEX = new RegExp([
+    "clientDim",
+    "offsetDim",
+    "minProps",
+    "maxDim",
+    "minDim",
+    "cursorPropName",
+    "cssSizeProp",
+    "colClassName",
+    "dragHandler",
+    "dragStartHandler",
+    "_canDrag",
+    "_refsArrIterator",
+    "_dimensionsStateModifier",
+    "_setInitialDimensionsCache",
+    "_getChangedState",
+    "setExactDimensions",
+    "refsArr",
+    "_curRszIndex",
+    "_initPtrPageDist",
+    "_getSaveRef"
+].join( "|" ));
+
+const RESOLVE_COMMON = resolve({
+    module: true,
+    jsnext: true,
+    main: true,
+    browser: true,
+    preferBuiltins: false
+});
+
 export default [{
     input: "src/index.js",
     output: {
@@ -21,13 +52,7 @@ export default [{
             "src/style.css": "dist/style.css",
             "src/resizer.style.css": "dist/resizer.style.css"
         }),
-        resolve({
-            module: true,
-            jsnext: true,
-            main: true,
-            browser: true,
-            preferBuiltins: false
-        }),
+        RESOLVE_COMMON,
         babel({
             babelrc: false,
             externalHelpers: true,
@@ -41,35 +66,11 @@ export default [{
         }),
         terser({
             ecma: 8,
-            /*output: {
-                beautify: true
-            },*/
             mangle: {
                 module: true,
                 properties: {
                     keep_quoted: true,
-                    regex: new RegExp([
-                        "clientDim",
-                        "offsetDim",
-                        "minProps",
-                        "maxDim",
-                        "minDim",
-                        "cursorPropName",
-                        "cssSizeProp",
-                        "colClassName",
-                        "dragHandler",
-                        "dragStartHandler",
-                        "_canDrag",
-                        "_refsArrIterator",
-                        "_dimensionsStateModifier",
-                        "_setInitialDimensionsCache",
-                        "_getChangedState",
-                        "setExactDimensions",
-                        "refsArr",
-                        "_curRszIndex",
-                        "_initPtrPageDist",
-                        "_getSaveRef"
-                    ].join( "|" ))
+                    regex: MANGLE_REGEX
                 }
             }
         })
@@ -88,13 +89,7 @@ export default [{
         "react-draggable"
     ],
     plugins: [
-        resolve({
-            module: true,
-            jsnext: true,
-            main: true,
-            browser: true,
-            preferBuiltins: false
-        }),
+        RESOLVE_COMMON,
         babel({
             babelrc: false,
             externalHelpers: true,
@@ -108,9 +103,13 @@ export default [{
         }),
         terser({
             ecma: 6,
-            /*output: {
-                beautify: true
-            }*/
+            mangle: {
+                module: true,
+                properties: {
+                    keep_quoted: true,
+                    regex: MANGLE_REGEX
+                }
+            }
         })
     ]
 }];

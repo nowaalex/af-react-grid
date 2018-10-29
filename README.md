@@ -57,11 +57,15 @@ disabled: ?bool
 
 ```
 
-## Tooltips
+## Features
+* Very small, exported as es modules (own code 3.5kb + react + react-dom + react-draggable + classNames)
 * Resizers are also given `data-resizer-index` and `data-resizer-type`, so their styling could be customized easily;
-* Want to have a super-highly customized `Resizer`? `resizerChildren` prop allows you to render custom child elements, which could be easily styled;
 * `resizerChildren` and `resizerClassName` props are passed deep to all nested `Container`s, so you want to declare these props only on root `Container`. Of course they may be overriden anywhere;
 * `maxHeight`, `minHeight`, `maxWidth`, `minWidth` are considered even if not declared inline, because their values are taken from `getComputedStyle` before drag starts;
+* Want to have a super-highly customized `Resizer`? `resizerChildren` prop allows you to render custom child elements, which could be easily styled;
+
+
+## Tooltips
 * If tou want `overflow: auto` on containers, you must either set it globally( add overflow rule to default container class ), or individually;
 * `React.Fragment` and `Array` children are not yet supported;
 * `Resizer`, which is first or last child, does nothing( see example );
@@ -71,3 +75,4 @@ disabled: ?bool
 * localStorage integration
 * Support `React.Fragment` and `Array` children.
 * Add types
+* `findDomNode` refuse ( maybe? ) 
