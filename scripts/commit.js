@@ -9,25 +9,22 @@ const POST_CMDS = [
     "git commit --amend -C HEAD --no-verify"
 ];
 
+const STDIO_ARR = [ 0, 1, 2 ];
+
 switch( process.argv[ 2 ] ){
     case "pre":
-        execSync( "yarn test", { stdio: [ 0, 1, 2 ] } );
+        execSync( "yarn test", { stdio: STDIO_ARR } );
         fs.closeSync( fs.openSync( EMPTY_FILE_NAME, "w" ) );
         break;
     case "post":
         if( fs.existsSync( EMPTY_FILE_NAME ) ){
+
             fs.unlinkSync( EMPTY_FILE_NAME );
 
             POST_CMDS.forEach( cmd => {
-                
-                try{
-                    console.log( `Running: ${cmd}` );
-                    execSync( cmd, { stdio: [ 0, 1, 2 ] } );
-                }
-                catch( e ){
-                    console.error( e )
-                }
-            })
+                console.log( `Running: ${cmd}` );
+                execSync( cmd, { stdio: STDIO_ARR } );
+            });
         }
         break;
 }
