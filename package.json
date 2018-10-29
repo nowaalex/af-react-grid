@@ -37,7 +37,7 @@
     "build:examples": "webpack --progress --mode=production --config webpack.config.js",
     "build": "npm-run-all -s build:library build:examples",
     "git:add:build": "git add dist example_dist",
-    "git:amend": "git commit --amend"
+    "git:amend": "git commit --amend -C HEAD"
   },
   "dependencies": {
     "classnames": "^2.2.6",
