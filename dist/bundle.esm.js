@@ -52,27 +52,27 @@ const h = (t, s = Object.create(null)) => i => s[i] || (s[i] = t(i)), a = (t, s,
         n: "maxHeight",
         h: [ "Top", "Bottom" ]
     }
-};
+}, m = (t, s, i) => t.hasOwnProperty(s) ? t[s] : i;
 
-function m(s) {
+function l(s) {
     if (!t.isValidElement(s)) return s;
-    const {type: i, props: e} = s, {resizerClassName: r, resizerChildren: o, type: h} = this.props;
+    const {type: i, props: e} = s, {resizerChildren: r, type: o} = this.props, h = m(this.props, "resizerClassName", "react-rsz-grid-default-resizer");
     if (i === n) return t.cloneElement(s, {
         index: this.a,
         onDrag: this.c,
         onStart: this.m,
-        type: h,
-        className: void 0 === e.className ? r : e.className
-    }, e.children || o);
+        type: o,
+        className: m(e, "className", h)
+    }, m(e, "children", r));
     const a = this.state[this.a], c = {
         style: e.style ? Object.assign({}, e.style, a) : a,
         ref: this.l(this.a++)
     };
-    return i === l && (void 0 === e.resizerClassName && (c.resizerClassName = r), void 0 === e.resizerChildren && (c.resizerChildren = o)), 
+    return i === d && (c.resizerClassName = m(e, "resizerClassName", h), c.resizerChildren = m(e, "resizerChildren", r)), 
     t.cloneElement(s, c);
 }
 
-class l extends t.Component {
+class d extends t.Component {
     constructor(...t) {
         super(...t), this.state = {}, this.d = [], this.m = (t => {
             const s = this.p = +t.currentTarget.dataset.resizerIndex, i = this.d[s - 1], e = this.d[s];
@@ -119,7 +119,7 @@ class l extends t.Component {
         return this.a = 0, t.createElement("div", {
             style: n,
             className: o(e, c[i].t),
-            children: s.map(r, m, this)
+            children: s.map(r, l, this)
         });
     }
     componentDidMount() {
@@ -134,7 +134,7 @@ class l extends t.Component {
     }
 }
 
-l.propTypes = {
+d.propTypes = {
     type: i.oneOf([ "row", "col" ]),
     className: i.string,
     style: i.object,
@@ -143,9 +143,8 @@ l.propTypes = {
     },
     resizerChildren: i.node,
     resizerClassName: i.string
-}, l.defaultProps = {
-    type: "row",
-    resizerClassName: "react-rsz-grid-default-resizer"
+}, d.defaultProps = {
+    type: "row"
 };
 
-export { n as Resizer, l as Container };
+export { n as Resizer, d as Container };
