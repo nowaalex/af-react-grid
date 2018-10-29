@@ -13,5 +13,8 @@ module.exports = {
   testEnvironment: "jsdom",
   testPathIgnorePatterns: [
     "/node_modules/"
-  ]
+  ],
+  globals: {
+    __JEST__: true
+  }
 };

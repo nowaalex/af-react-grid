@@ -6,6 +6,12 @@
   ],
   "main": "dist/bundle.js",
   "module": "dist/bundle.esm.js",
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn test",
+      "pre-push": "yarn test"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:nowaalex/af-react-grid.git"
@@ -54,6 +60,7 @@
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^1.0.0",
     "html-webpack-plugin": "^3.2.0",
+    "husky": "^1.1.2",
     "jest": "^23.6.0",
     "jest-mock-console": "^0.4.0",
     "mini-css-extract-plugin": "^0.4.4",

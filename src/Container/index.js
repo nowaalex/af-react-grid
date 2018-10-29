@@ -198,7 +198,20 @@ class Container extends React.Component{
     }
 
     _getSaveRef = memoizeOneNumericArg( index => node => {
+
         this.refsArr[ index ] = ReactDOM.findDOMNode( node );
+
+        /* findDOMNode may return text, so using instanceof check */
+        if( process.env.NODE_ENV !== "production" && this.refsArr[ index ] && !( this.refsArr[ index ] instanceof Element ) ){
+
+            if( !__JEST__ ){
+                /* I don't know how to mock refs instanceof in jest, so.... */
+                console.error(
+                    "af-react-grid: can't find ref for:", node,
+                    "ReactDOM.findDomNode must return element for all children of Container."
+                );
+            }
+        }
     });
 
     
@@ -229,16 +242,21 @@ class Container extends React.Component{
         const { cssSizeProp, offsetDim } = ByType[ type ];
 
         return this.refsArr.reduce(( res, ref, i ) => {
-            res[ i ] = {
-                ...curState[ i ],
-                [cssSizeProp]: ref[ offsetDim ],
-
-                /* If exact width/height is known, flexBasis may be erased */
-                flexBasis: "auto",
-
-                /* We must take boxSizing into account to render borders, paddings, scrollbars, etc. */
-                boxSizing: "border-box"
-            };
+            /*
+                ReactDOM.findDomNode may be null for some Container children
+            */
+            if( ref ){
+                res[ i ] = {
+                    ...curState[ i ],
+                    [cssSizeProp]: ref[ offsetDim ],
+    
+                    /* If exact width/height is known, flexBasis may be erased */
+                    flexBasis: "auto",
+    
+                    /* We must take boxSizing into account to render borders, paddings, scrollbars, etc. */
+                    boxSizing: "border-box"
+                };
+            }
             return res;
         }, {});
     }
