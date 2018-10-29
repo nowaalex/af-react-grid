@@ -8,8 +8,8 @@
   "module": "dist/bundle.esm.js",
   "husky": {
     "hooks": {
-      "pre-commit": "npm-run-all -s test build",
-      "post-commit": "npm-run-all -s git:add:build git:amend",
+      "pre-commit": "node scripts/commit.js pre",
+      "post-commit": "node scripts/commit.js post",
       "pre-push": "yarn test"
     }
   },
@@ -64,6 +64,7 @@
     "babel-preset-react": "^6.24.1",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^1.0.0",
+    "fs": "^0.0.1-security",
     "html-webpack-plugin": "^3.2.0",
     "husky": "^1.1.2",
     "jest": "^23.6.0",
