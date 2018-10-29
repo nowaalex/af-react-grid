@@ -41,9 +41,9 @@ export default [{
         }),
         terser({
             ecma: 8,
-            output: {
+            /*output: {
                 beautify: true
-            },
+            },*/
             mangle: {
                 module: true,
                 properties: {
@@ -108,9 +108,9 @@ export default [{
         }),
         terser({
             ecma: 6,
-            output: {
+            /*output: {
                 beautify: true
-            }
+            }*/
         })
     ]
 }];
