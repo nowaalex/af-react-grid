@@ -9,7 +9,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "yarn test",
-      "post-commit": "npm-run-all -s test build 'git add dist example_dist' 'git commit --amend'",
+      "post-commit": "npm-run-all -s test build \"git add dist example_dist\" \"git commit --amend\"",
       "pre-push": "yarn test"
     }
   },
