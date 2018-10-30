@@ -4,7 +4,7 @@ const { execSync } = require( "child_process" );
 const EMPTY_FILE_NAME = ".hiddenGitStatusInd";
 
 const POST_CMDS = [
-    "yarn build",
+    "npm build",
     "git add dist/ example_dist/",
     "git commit --amend -C HEAD --no-verify"
 ];
@@ -12,10 +12,12 @@ const POST_CMDS = [
 const STDIO_ARR = [ 0, 1, 2 ];
 
 switch( process.argv[ 2 ] ){
+
     case "pre":
         execSync( "yarn test", { stdio: STDIO_ARR } );
         fs.closeSync( fs.openSync( EMPTY_FILE_NAME, "w" ) );
         break;
+
     case "post":
         if( fs.existsSync( EMPTY_FILE_NAME ) ){
 
@@ -27,4 +29,7 @@ switch( process.argv[ 2 ] ){
             });
         }
         break;
+    
+    default:
+        throw new Error( "Wrong commit.js usage" );
 }
