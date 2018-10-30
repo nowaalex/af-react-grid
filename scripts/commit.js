@@ -4,7 +4,7 @@ const { execSync } = require( "child_process" );
 const EMPTY_FILE_NAME = ".hiddenGitStatusInd";
 
 const POST_CMDS = [
-    "npm build",
+    "npm run build",
     "git add dist/ example_dist/",
     "git commit --amend -C HEAD --no-verify"
 ];

@@ -10,7 +10,7 @@
     "hooks": {
       "pre-commit": "node scripts/commit.js pre",
       "post-commit": "node scripts/commit.js post",
-      "pre-push": "npm test"
+      "pre-push": "npm run test"
     }
   },
   "repository": {
