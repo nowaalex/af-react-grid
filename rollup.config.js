@@ -23,7 +23,11 @@ const MANGLE_REGEX = new RegExp([
     "refsArr",
     "_curRszIndex",
     "_initPtrPageDist",
-    "_getSaveRef"
+    "_getSaveRef",
+    "StorageObject",
+    "addStylesInfo",
+    "getStylesInfo",
+    "sendToStateSaverIfNeeded"
 ].join( "|" ));
 
 const RESOLVE_COMMON = resolve({

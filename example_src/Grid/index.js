@@ -27,7 +27,7 @@ class Grid extends React.Component{
                     <button onClick={this.add}>Add</button>
                     <button onClick={this.remove}>Remove</button>
                 </div>
-                <Container style={{ height: "80vh" }}>
+                <Container localStorageKey="haha" style={{ height: "80vh" }}>
                     <Container resizerChildren={<span>Hello</span>} type="col">
                         <Resizer>This resizer is placed in wrong place, so it is useless</Resizer>
                         <div style={{ background: "violet" }}>1</div>

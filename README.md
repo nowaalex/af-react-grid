@@ -14,7 +14,7 @@ import "af-react-grid/dist/resizer.style.css";
 
 import { Container, Resizer } from "af-react-grid";
 
-<Containter type="row">
+<Containter localStorageKey="someGridName" type="row">
     <div>Child 1</div>
     <Resizer />
     <div>Child 2</div>
@@ -41,7 +41,9 @@ children: ?node,
 
 resizerChildren: ?node,
 
-resizerClassName: ?string = "react-rsz-grid-default-resizer"
+resizerClassName: ?string = "react-rsz-grid-default-resizer",
+
+localStorageKey: ?string
 
 ```
 
@@ -63,6 +65,7 @@ disabled: ?bool
 * `resizerChildren` and `resizerClassName` props are passed deep to all nested `Container`s, so you want to declare these props only on root `Container`. Of course they may be overriden anywhere;
 * `maxHeight`, `minHeight`, `maxWidth`, `minWidth` are considered even if not declared inline, because their values are taken from `getComputedStyle` before drag starts;
 * Want to have a super-highly customized `Resizer`? `resizerChildren` prop allows you to render custom child elements, which could be easily styled;
+* localStorageKey prop is passed down to children with child index added, like `someGridName_0_2`, until overriden;
 
 
 ## Tooltips
@@ -72,7 +75,6 @@ disabled: ?bool
 * Feel free to customize `Resizer` styling by providing your own css( use `dist/resizer.style.css` as an example )
 
 ## TODO
-* localStorage integration
 * Support `React.Fragment` and `Array` children.
 * Add types
 * `findDomNode` refuse ( maybe? ) 

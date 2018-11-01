@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 import cn from "classnames";
 import Resizer from "../Resizer";
+import StateSaver from "./StateSaver";
 
 import { memoizeOneNumericArg, clamp } from "../utils";
 
@@ -27,7 +28,9 @@ const ByType = {
         maxDim: "maxHeight",
         minProps: [ "Top", "Bottom" ]
     }
-}
+};
+
+
 
 const getCorrectProperty = ( obj, prop, fallbackProp ) => obj.hasOwnProperty( prop ) ? obj[ prop ] : fallbackProp;
 
@@ -39,14 +42,16 @@ function childrenMapper( el ){
 
     const { type, props } = el;
 
-    const { resizerChildren, type: curType } = this.props;
+    const { resizerChildren, type: curType, localStorageKey } = this.props;
 
     /* If we just use defaultProps, resizerClassName will not be passed down to nested Containers proprly */
     const realResizerClassName = getCorrectProperty( this.props, "resizerClassName", "react-rsz-grid-default-resizer" );
 
+    const curIndex = this._refsArrIterator;
+
     if( type === Resizer ){
         return React.cloneElement( el, {
-            index: this._refsArrIterator,
+            index: curIndex,
             onDrag: this.dragHandler,
             onStart: this.dragStartHandler,
             type: curType,
@@ -54,18 +59,21 @@ function childrenMapper( el ){
         }, getCorrectProperty( props, "children", resizerChildren ) );
     }
 
-    const calculatedElementStyle = this.state[ this._refsArrIterator ];
+    const calculatedElementStyle = this.state[ curIndex ];
 
     const passProps = {
         style: props.style ? { ...props.style, ...calculatedElementStyle } : calculatedElementStyle,
-        ref: this._getSaveRef( this._refsArrIterator++ )
+        ref: this._getSaveRef( curIndex )
     }
 
     if( type === Container ){
         /* We sacrifice performance in order to make code more compact here */
         passProps.resizerClassName = getCorrectProperty( props, "resizerClassName", realResizerClassName );
         passProps.resizerChildren = getCorrectProperty( props, "resizerChildren", resizerChildren );
+        passProps.localStorageKey = getCorrectProperty( props, "localStorageKey", localStorageKey + "_" + curIndex );
     }
+
+    this._refsArrIterator++;
 
     return React.cloneElement( el, passProps );
 }
@@ -83,14 +91,15 @@ class Container extends React.Component{
             }
         },
         resizerChildren:        PropTypes.node,
-        resizerClassName:       PropTypes.string
+        resizerClassName:       PropTypes.string,
+        localStorageKey:        PropTypes.string
     }
 
     static defaultProps = {
         type: "row"
     }
 
-    state = {}
+    state = StateSaver.getStylesInfo( this.props.localStorageKey );
 
     /*  
         Inner props:
@@ -132,6 +141,13 @@ class Container extends React.Component{
 
         this[ "_minD" + fieldIndex ] = minDist + ( parseFloat( obj[ minDim ] ) || 0 );
         this[ "_maxD" + fieldIndex ] = parseFloat( obj[ maxDim ] ) || 0;
+    }
+
+    sendToStateSaverIfNeeded(){
+        const { localStorageKey } = this.props;
+        if( localStorageKey ){
+            StateSaver.addStylesInfo( localStorageKey, this.state );
+        }
     }
 
     dragStartHandler = e => {
@@ -214,8 +230,6 @@ class Container extends React.Component{
         }
     });
 
-    
-
     render(){
 
         const {
@@ -269,7 +283,9 @@ class Container extends React.Component{
     }
 
     componentDidUpdate(){
-        
+
+        this.sendToStateSaverIfNeeded();
+
         const diff = this.refsArr.length - this._refsArrIterator;
 
         if( diff ){
