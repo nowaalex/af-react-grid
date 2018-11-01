@@ -5,34 +5,8 @@ import cn from "classnames";
 import Resizer from "../Resizer";
 import StateSaver from "./StateSaver";
 
-import { memoizeOneNumericArg, clamp } from "../utils";
-
-const ByType = {
-    row: {
-        colClassName: "react-rsz-grid-row",
-        cursorPropName: "pageX",
-        offsetDim: "offsetWidth",
-        clientDim: "clientWidth",
-        cssSizeProp: "width",
-        minDim: "minWidth",
-        maxDim: "maxWidth",
-        minProps: [ "Left", "Right" ]
-    },
-    col: {
-        colClassName: "react-rsz-grid-col",
-        cursorPropName: "pageY",
-        offsetDim: "offsetHeight",
-        clientDim: "clientHeight",
-        cssSizeProp: "height",
-        minDim: "minHeight",
-        maxDim: "maxHeight",
-        minProps: [ "Top", "Bottom" ]
-    }
-};
-
-
-
-const getCorrectProperty = ( obj, prop, fallbackProp ) => obj.hasOwnProperty( prop ) ? obj[ prop ] : fallbackProp;
+import { memoizeOneNumericArg, clamp, getCorrectProperty } from "../utils";
+import { ByType, UNIQUE_HASH } from "../constants";
 
 function childrenMapper( el ){
 
@@ -40,7 +14,7 @@ function childrenMapper( el ){
         return el;
     }
 
-    const { type, props } = el;
+    const { type, props, key } = el;
 
     const { resizerChildren, type: curType, localStorageKey } = this.props;
 
@@ -59,7 +33,24 @@ function childrenMapper( el ){
         }, getCorrectProperty( props, "children", resizerChildren ) );
     }
 
-    const calculatedElementStyle = this.state[ curIndex ];
+    /*
+        UNIQUE_HASH is needed here for keys not to collide. For example:
+        <Container>
+            <div>
+                This element does not have default key.
+                So without UNIQUE_HASH it would be keyed just by index. Key would be: 0.
+                People often use indexes as keys, so we try to decrease collision chance.
+            </div>
+            {[
+                [ 0, 1, 2 ].map( i => <div key={i}>{i}</div> )
+            ]}
+        </Container>
+    */
+    const stateKey = key || ( UNIQUE_HASH + curIndex );
+
+    this._indexesToKeys[ curIndex ] = stateKey;
+
+    const calculatedElementStyle = this.state[ stateKey ];
 
     const passProps = {
         style: props.style ? { ...props.style, ...calculatedElementStyle } : calculatedElementStyle,
@@ -70,7 +61,7 @@ function childrenMapper( el ){
         /* We sacrifice performance in order to make code more compact here */
         passProps.resizerClassName = getCorrectProperty( props, "resizerClassName", realResizerClassName );
         passProps.resizerChildren = getCorrectProperty( props, "resizerChildren", resizerChildren );
-        passProps.localStorageKey = getCorrectProperty( props, "localStorageKey", localStorageKey + "_" + curIndex );
+        passProps.localStorageKey = getCorrectProperty( props, "localStorageKey", localStorageKey + "_" + stateKey );
     }
 
     this._refsArrIterator++;
@@ -105,7 +96,6 @@ class Container extends React.Component{
         Inner props:
 
         _refsArrIterator;
-        _canDrag;
         _curRszIndex;
         _initPtrPageDist;
         _curD1;
@@ -123,6 +113,12 @@ class Container extends React.Component{
             * components, that treat style property and render single child
     */
     refsArr = [];
+
+    /*
+        If we want to save child dimensions by it's key, not index,
+        we need to have a chance to get this key by index while resizing;
+    */
+    _indexesToKeys = {};
 
     _setInitialDimensionsCache( el, fieldIndex ){
 
@@ -158,7 +154,7 @@ class Container extends React.Component{
         const prevElement = this.refsArr[ index - 1 ];
         const nextElement = this.refsArr[ index ];
 
-        if( this._canDrag = !!( prevElement && nextElement ) ){
+        if( prevElement && nextElement ){
             /* Can drag only if resizer is not first or last child inside refsArr */
 
             const { cursorPropName } = ByType[ this.props.type ];
@@ -186,21 +182,29 @@ class Container extends React.Component{
     }
 
     _getChangedState( curState, cssSizeProp, step ){
+
         const index = this._curRszIndex;
+        const realCurIndex = this._indexesToKeys[ index ];
+        const realPrevIndex = this._indexesToKeys[ index - 1 ];
+
         return {
-            [ index - 1 ]: {
-                ...curState[ index - 1 ],
+            [ realPrevIndex ]: {
+                ...curState[ realPrevIndex ],
                 [cssSizeProp]: clamp( this._curD1 + step, this._minD1, this._maxD1 )
             },
-            [ index ]: {
-                ...curState[ index ],
+            [ realCurIndex ]: {
+                ...curState[ realCurIndex ],
                 [cssSizeProp]: clamp( this._curD2 - step, this._minD2, this._maxD2 )
             }
         };
     }
 
     dragHandler = e => {
-        if( this._canDrag ){
+
+        const index = this._curRszIndex;
+
+        /* It is better to always check children here, because they could be unmounted while dragging */
+        if( this.refsArr[ index ] && this.refsArr[ index - 1 ] ){
 
             const { cursorPropName, cssSizeProp } = ByType[ this.props.type ];
             const step = e[ cursorPropName ] - this._initPtrPageDist;
@@ -259,9 +263,12 @@ class Container extends React.Component{
             /*
                 ReactDOM.findDomNode may be null for some Container children
             */
+
+            const stateKey = this._indexesToKeys[ i ];
+
             if( ref ){
-                res[ i ] = {
-                    ...curState[ i ],
+                res[ stateKey ] = {
+                    ...curState[ stateKey ],
                     [cssSizeProp]: ref[ offsetDim ],
     
                     /* If exact width/height is known, flexBasis may be erased */

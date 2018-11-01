@@ -30,10 +30,10 @@ class Grid extends React.Component{
                 <Container localStorageKey="haha" style={{ height: "80vh" }}>
                     <Container resizerChildren={<span>Hello</span>} type="col">
                         {[
-                            <Resizer key={1}>This resizer is placed in wrong place, so it is useless</Resizer>,
-                            <div key={2} style={{ background: "violet" }}>1</div>,
-                            <Resizer key={3}>Yes, it can handle 2 resizers</Resizer>,
-                            <Resizer key={4}>As if it was one</Resizer>
+                            <Resizer key="one">This resizer is placed in wrong place, so it is useless</Resizer>,
+                            <div key="two" style={{ background: "violet" }}>1</div>,
+                            <Resizer key="three">Yes, it can handle 2 resizers</Resizer>,
+                            <Resizer key="four">As if it was one</Resizer>
                         ]}
                         <Container resizerChildren={null} style={{ minHeight: 200, flexGrow: 1 }}>
                                 <div style={{flexGrow: 1, background: "red" }}>2</div>

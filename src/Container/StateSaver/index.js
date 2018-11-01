@@ -1,16 +1,16 @@
-const LOCAL_STORAGE_KEY_NAME = "aFrCtGrD";
+import { UNIQUE_HASH } from "../../constants";
 
 class StateSaver{
 
     constructor(){
 
-        const obj = localStorage.getItem( LOCAL_STORAGE_KEY_NAME );
+        const obj = localStorage.getItem( UNIQUE_HASH );
         this.StorageObject = obj ? JSON.parse( obj ) : {};
 
         window.addEventListener( "beforeunload", () => {
             if( Object.keys( this.StorageObject ).length > 1 ){
                 localStorage.setItem(
-                    LOCAL_STORAGE_KEY_NAME,
+                    UNIQUE_HASH,
                     JSON.stringify( this.StorageObject )
                 );
             }

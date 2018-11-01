@@ -66,6 +66,7 @@ disabled: ?bool
 * `maxHeight`, `minHeight`, `maxWidth`, `minWidth` are considered even if not declared inline, because their values are taken from `getComputedStyle` before drag starts;
 * Want to have a super-highly customized `Resizer`? `resizerChildren` prop allows you to render custom child elements, which could be easily styled;
 * `localStorageKey` prop is passed down to children with child index added, like `someGridName_0_2`, until overriden;
+* If a child has `key` prop, it's dimensions are saved by key, otherwise by it's index, so be careful to use unique keys;
 
 
 ## Tooltips
@@ -77,5 +78,4 @@ disabled: ?bool
 ## TODO
 * Support `React.Fragment` children.
 * Add types
-* Add keyed children support
 * `findDomNode` refuse ( maybe? )
