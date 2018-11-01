@@ -86,8 +86,8 @@ class Container extends React.Component{
         style:                  PropTypes.object,
         children: ( props, propName ) => {
             const arr = Children.toArray( props[ propName ] );
-            if( arr.some( child => React.isValidElement( child ) && ( child.type === React.Fragment || Array.isArray( child ) ) ) ){
-                throw new Error( "Fragments and arrays are not allowed inside Container" );
+            if( arr.some( child => React.isValidElement( child ) && ( child.type === React.Fragment ) ) ){
+                throw new Error( "Fragments are not allowed inside Container, use arrays instead" );
             }
         },
         resizerChildren:        PropTypes.node,

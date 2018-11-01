@@ -29,25 +29,27 @@ class Grid extends React.Component{
                 </div>
                 <Container localStorageKey="haha" style={{ height: "80vh" }}>
                     <Container resizerChildren={<span>Hello</span>} type="col">
-                        <Resizer>This resizer is placed in wrong place, so it is useless</Resizer>
-                        <div style={{ background: "violet" }}>1</div>
-                        <Resizer>Yes, it can handle 2 resizers</Resizer>
-                        <Resizer>As if it was one</Resizer>
+                        {[
+                            <Resizer key={1}>This resizer is placed in wrong place, so it is useless</Resizer>,
+                            <div key={2} style={{ background: "violet" }}>1</div>,
+                            <Resizer key={3}>Yes, it can handle 2 resizers</Resizer>,
+                            <Resizer key={4}>As if it was one</Resizer>
+                        ]}
                         <Container resizerChildren={null} style={{ minHeight: 200, flexGrow: 1 }}>
-                            <div style={{flexGrow: 1, background: "red" }}>2</div>
-                            <Resizer />
-                            <div style={{ background: "blue", width: 200 }}>3</div>
-                            <Resizer />
-                            <div style={{ background: "pink", padding: "1em", border: "3px solid black" }}>Paddings and borders also work</div>
-                            <div style={{ background: "orange" }}>No resizer goes here</div>
-                            <Container type="col" style={{ flexGrow: 1 }}>
-                                <div style={{flexGrow: 1, background: "red" }}>5</div>
+                                <div style={{flexGrow: 1, background: "red" }}>2</div>
                                 <Resizer />
-                                <div style={{ background: "blue", overflow: "scroll", padding: "2em" }}>A little overflow with big padding</div>
+                                <div style={{ background: "blue", width: 200 }}>3</div>
                                 <Resizer />
-                                <div style={{ background: "pink" }}>7</div>
+                                <div style={{ background: "pink", padding: "1em", border: "3px solid black" }}>Paddings and borders also work</div>
+                                <div style={{ background: "orange" }}>No resizer goes here</div>
+                                <Container type="col" style={{ flexGrow: 1 }}>
+                                    <div style={{flexGrow: 1, background: "red" }}>5</div>
+                                    <Resizer />
+                                    <div style={{ background: "blue", overflow: "scroll", padding: "2em" }}>A little overflow with big padding</div>
+                                    <Resizer />
+                                    <div style={{ background: "pink" }}>7</div>
+                                </Container>
                             </Container>
-                        </Container>
                         <Resizer />
                         <div style={{ background: "yellow", overflow: "scroll" }}>Just overflow</div>
                         <Resizer>One more useless resizer</Resizer>

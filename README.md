@@ -70,12 +70,12 @@ disabled: ?bool
 
 ## Tooltips
 * If tou want `overflow: auto` on containers, you must either set it globally( add overflow rule to default container class ), or individually;
-* `React.Fragment` and `Array` children are not yet supported;
+* `React.Fragment` children are not yet supported;
 * `Resizer`, which is first or last child, does nothing( see example );
 * Feel free to customize `Resizer` styling by providing your own css( use `dist/resizer.style.css` as an example )
 
 ## TODO
-* Support `React.Fragment` and `Array` children.
+* Support `React.Fragment` children.
 * Add types
-* `findDomNode` refuse ( maybe? ) 
 * Add keyed children support
+* `findDomNode` refuse ( maybe? )
