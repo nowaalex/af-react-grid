@@ -65,7 +65,7 @@ disabled: ?bool
 * `resizerChildren` and `resizerClassName` props are passed deep to all nested `Container`s, so you want to declare these props only on root `Container`. Of course they may be overriden anywhere;
 * `maxHeight`, `minHeight`, `maxWidth`, `minWidth` are considered even if not declared inline, because their values are taken from `getComputedStyle` before drag starts;
 * Want to have a super-highly customized `Resizer`? `resizerChildren` prop allows you to render custom child elements, which could be easily styled;
-* localStorageKey prop is passed down to children with child index added, like `someGridName_0_2`, until overriden;
+* `localStorageKey` prop is passed down to children with child index added, like `someGridName_0_2`, until overriden;
 
 
 ## Tooltips
@@ -78,3 +78,4 @@ disabled: ?bool
 * Support `React.Fragment` and `Array` children.
 * Add types
 * `findDomNode` refuse ( maybe? ) 
+* Add keyed children support
