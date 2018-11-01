@@ -49,7 +49,6 @@ function childrenMapper( el ){
 
     const curIndex = this._refsArrIterator;
 
-    
     if( type === Resizer ){
         return React.cloneElement( el, {
             index: curIndex,
