@@ -23,6 +23,9 @@ class Grid extends React.Component{
 
         return (
             <React.Fragment>
+            <Container resizerClassName={undefined}>
+            <Resizer className="class4" />
+        </Container>
                 <div>
                     <button onClick={this.add}>Add</button>
                     <button onClick={this.remove}>Remove</button>

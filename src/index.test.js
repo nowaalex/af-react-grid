@@ -31,9 +31,7 @@ test( "Container passes correct className to Resizer", () => {
         </Container>
     );
 
-    expect( component.root.findByProps({
-        className: "class4"
-    }));
+    expect( component.root.findAll( el => el.type === "div" && el.props.className === "class4" )).toHaveLength( 1 );
 
     component.update(
         <Container resizerClassName="class5">
@@ -47,9 +45,7 @@ test( "Container passes correct className to Resizer", () => {
         </Container>
     );
 
-    expect( component.root.findAllByProps({
-        className: "class5"
-    }) ).toHaveLength( 3 );
+    expect( component.root.findAll( el => el.type === "div" && el.props.className === "class5" )).toHaveLength( 3 );
 
     /* Now trying to stop inheritance.... */
 
@@ -65,9 +61,7 @@ test( "Container passes correct className to Resizer", () => {
         </Container>
     );
 
-    expect( component.root.findAllByProps({
-        className: "class6"
-    }) ).toHaveLength( 2 );
+    expect( component.root.findAll( el => el.type === "div" && el.props.className === "class6" )).toHaveLength( 2 );
 
     /* Now trying to pass two classes... */
 
@@ -86,13 +80,9 @@ test( "Container passes correct className to Resizer", () => {
         </Container>
     );
 
-    expect( component.root.findAllByProps({
-        className: "class7"
-    }) ).toHaveLength( 2 );
+    expect( component.root.findAll( el => el.type === "div" && el.props.className === "class7" )).toHaveLength( 2 );
 
-    expect( component.root.findAllByProps({
-        className: "class8"
-    }) ).toHaveLength( 2 );
+    expect( component.root.findAll( el => el.type === "div" && el.props.className === "class8" )).toHaveLength( 2 );
 });
 
 
