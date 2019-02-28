@@ -1,6 +1,5 @@
 const path = require( "path" );
 const HtmlWebpackPlugin = require( "html-webpack-plugin" );
-const MiniCssExtractPlugin = require( "mini-css-extract-plugin" );
 const CleanPlugin = require( "clean-webpack-plugin" );
 
 module.exports = {
@@ -15,12 +14,6 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel-loader"
-            },{
-                test: /\.css$/,
-                use: [
-                    process.env.NODE_ENV === "production" ? MiniCssExtractPlugin.loader : "style-loader",
-                    "css-loader"
-                ]
             }
         ]
     },
@@ -31,8 +24,7 @@ module.exports = {
         new CleanPlugin([ "example_dist" ]),
         new HtmlWebpackPlugin({
             title: "Examples"
-        }),
-        new MiniCssExtractPlugin()
+        })
     ],
     devServer: {
         watchOptions: {

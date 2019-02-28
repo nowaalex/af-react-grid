@@ -1,9 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import "style.css";
-import "resizer.style.css";
-
 import Grid from "./Grid";
 
 const App = () => (

@@ -1,6 +1,5 @@
 import resolve from "rollup-plugin-node-resolve";
 import babel from "rollup-plugin-babel";
-import copy from "rollup-copy-plugin";
 
 const RESOLVE_COMMON = resolve({
     module: true,
@@ -21,13 +20,10 @@ export default {
         "react-dom",
         "prop-types",
         "classnames",
-        "react-draggable"
+        "react-draggable",
+        "emotion"
     ],
     plugins: [
-        copy({
-            "src/style.css": "dist/style.css",
-            "src/resizer.style.css": "dist/resizer.style.css"
-        }),
         RESOLVE_COMMON,
         babel()
     ]

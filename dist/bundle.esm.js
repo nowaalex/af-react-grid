@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { DraggableCore } from 'react-draggable';
 import ReactDOM from 'react-dom';
 import cn from 'classnames';
+import { css } from 'emotion';
 
 var Resizer = React.memo(function (_ref) {
   var className = _ref.className,
@@ -139,13 +140,61 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
+function _taggedTemplateLiteral(strings, raw) {
+  if (!raw) {
+    raw = strings.slice(0);
+  }
+
+  return Object.freeze(Object.defineProperties(strings, {
+    raw: {
+      value: Object.freeze(raw)
+    }
+  }));
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["\n    display: flex;\n    flex-flow: column nowrap;\n"]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["\n    display: flex;\n    flex-flow: row nowrap;\n"]);
+
+  _templateObject = function _templateObject() {
+    return data;
+  };
+
+  return data;
+}
 /* used as localStorage key and state default key prefix */
+
 var UNIQUE_HASH = "<|-aFrCtGrD-|>";
+var DEFAULT_RESIZER_STYLES = {
+  flexShrink: 0,
+  flexGrow: 0,
+  flexBasis: 7,
+  position: "relative",
+  background: "#fff",
+  zIndex: 10,
+  '&[data-resizer-type="row"]': {
+    cursor: "col-resize"
+  },
+  '&[data-resizer-type="col"]': {
+    cursor: "row-resize"
+  }
+};
+var rowClassName = css(_templateObject());
+var colClassName = css(_templateObject2());
 /* used in Container component to glue col and row logic together in one component */
 
 var ByType = {
   row: {
-    colClassName: "react-rsz-grid-row",
+    colClassName: rowClassName,
     cursorPropName: "pageX",
     offsetDim: "offsetWidth",
     clientDim: "clientWidth",
@@ -155,7 +204,7 @@ var ByType = {
     minProps: ["Left", "Right"]
   },
   col: {
-    colClassName: "react-rsz-grid-col",
+    colClassName: colClassName,
     cursorPropName: "pageY",
     offsetDim: "offsetHeight",
     clientDim: "clientHeight",
@@ -213,6 +262,8 @@ var getCorrectProperty = function getCorrectProperty(obj, prop, fallbackProp) {
   return obj.hasOwnProperty(prop) ? obj[prop] : fallbackProp;
 };
 
+var DEFAULT_RESIZER_CLASS_NAME = css(DEFAULT_RESIZER_STYLES);
+
 function childrenMapper(el) {
   if (!React.isValidElement(el)) {
     return el;
@@ -227,7 +278,7 @@ function childrenMapper(el) {
       localStorageKey = _this$props.localStorageKey;
   /* If we just use defaultProps, resizerClassName will not be passed down to nested Containers proprly */
 
-  var realResizerClassName = getCorrectProperty(this.props, "resizerClassName", "react-rsz-grid-default-resizer");
+  var realResizerClassName = getCorrectProperty(this.props, "resizerClassName", DEFAULT_RESIZER_CLASS_NAME);
   var curIndex = this._refsArrIterator;
 
   if (type === Resizer) {

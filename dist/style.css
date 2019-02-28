@@ -1,9 +1,0 @@
-.react-rsz-grid-col{
-    display: flex;
-    flex-flow: column nowrap;
-}
-
-.react-rsz-grid-row{
-    display: flex;
-    flex-flow: row nowrap;
-}

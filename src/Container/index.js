@@ -4,9 +4,12 @@ import PropTypes from "prop-types";
 import cn from "classnames";
 import Resizer from "../Resizer";
 import StateSaver from "./StateSaver";
+import { css } from "emotion";
 
 import { memoizeOneNumericArg, clamp, getCorrectProperty } from "../utils";
-import { ByType, UNIQUE_HASH } from "../constants";
+import { ByType, UNIQUE_HASH, DEFAULT_RESIZER_STYLES } from "../constants";
+
+const DEFAULT_RESIZER_CLASS_NAME = css( DEFAULT_RESIZER_STYLES );
 
 function childrenMapper( el ){
 
@@ -19,7 +22,7 @@ function childrenMapper( el ){
     const { resizerChildren, type: curType, localStorageKey } = this.props;
 
     /* If we just use defaultProps, resizerClassName will not be passed down to nested Containers proprly */
-    const realResizerClassName = getCorrectProperty( this.props, "resizerClassName", "react-rsz-grid-default-resizer" );
+    const realResizerClassName = getCorrectProperty( this.props, "resizerClassName", DEFAULT_RESIZER_CLASS_NAME );
 
     const curIndex = this._refsArrIterator;
 
@@ -174,7 +177,7 @@ class Container extends React.Component{
                 this._maxD2 = sum - this._minD1;
             }
 
-            this.setExactDimensions()
+            this.setExactDimensions();
         }
         else if( process.env.NODE_ENV !== "production" ){
             console.warn( "Resizer must be between other components. It is inactive during this drag." );
