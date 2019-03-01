@@ -9,8 +9,6 @@ import { css } from "emotion";
 import { memoizeOneNumericArg, clamp, getCorrectProperty } from "../utils";
 import { ByType, UNIQUE_HASH, DEFAULT_RESIZER_STYLES } from "../constants";
 
-const DEFAULT_RESIZER_CLASS_NAME = css( DEFAULT_RESIZER_STYLES );
-
 function childrenMapper( el ){
 
     if( !React.isValidElement( el ) ){
@@ -22,7 +20,7 @@ function childrenMapper( el ){
     const { resizerChildren, type: curType, localStorageKey } = this.props;
 
     /* If we just use defaultProps, resizerClassName will not be passed down to nested Containers proprly */
-    const realResizerClassName = getCorrectProperty( this.props, "resizerClassName", DEFAULT_RESIZER_CLASS_NAME );
+    const realResizerClassName = getCorrectProperty( this.props, "resizerClassName", Container.defaultResizerClass );
 
     const curIndex = this._refsArrIterator;
 
@@ -86,6 +84,7 @@ class Container extends React.Component{
         },
         resizerChildren:        PropTypes.node,
         resizerClassName:       PropTypes.string,
+        defaultResizerStyle:    PropTypes.oneOfType([ PropTypes.object, PropTypes.func ]),
         localStorageKey:        PropTypes.string
     }
 
@@ -93,7 +92,26 @@ class Container extends React.Component{
         type: "row"
     }
 
-    state = StateSaver.getStylesInfo( this.props.localStorageKey );
+    static setGlobalDefaultResizersStyle( newStyle ){
+        const st = Container.defaultResizerStyle = typeof newStyle === "function" ? newStyle( Container.defaultResizerStyle ) : newStyle;
+        Container.defaultResizerClass = css( st );
+    }
+
+    constructor( props ){
+        super( props );
+
+        this.state = StateSaver.getStylesInfo( props.localStorageKey );
+
+        const { defaultResizerStyle: ds } = props;
+
+        if( ds ){
+            this.defaultResizerClass = typeof ds === "function" ? ds( Container.defaultResizerStyle ) : ds;
+        }
+        else{
+            this.defaultResizerClass = getCorrectProperty( props, "resizerClassName", Container.defaultResizerClass );
+        }
+    }
+
 
     /*  
         Inner props:
@@ -312,5 +330,7 @@ class Container extends React.Component{
         clearTimeout( this._st );
     }
 }
+
+Container.setGlobalDefaultResizersStyle( DEFAULT_RESIZER_STYLES );
 
 export default Container;

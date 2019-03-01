@@ -262,8 +262,6 @@ var getCorrectProperty = function getCorrectProperty(obj, prop, fallbackProp) {
   return obj.hasOwnProperty(prop) ? obj[prop] : fallbackProp;
 };
 
-var DEFAULT_RESIZER_CLASS_NAME = css(DEFAULT_RESIZER_STYLES);
-
 function childrenMapper(el) {
   if (!React.isValidElement(el)) {
     return el;
@@ -278,7 +276,7 @@ function childrenMapper(el) {
       localStorageKey = _this$props.localStorageKey;
   /* If we just use defaultProps, resizerClassName will not be passed down to nested Containers proprly */
 
-  var realResizerClassName = getCorrectProperty(this.props, "resizerClassName", DEFAULT_RESIZER_CLASS_NAME);
+  var realResizerClassName = getCorrectProperty(this.props, "resizerClassName", Container.defaultResizerClass);
   var curIndex = this._refsArrIterator;
 
   if (type === Resizer) {
@@ -329,19 +327,20 @@ var Container =
 function (_React$Component) {
   _inherits(Container, _React$Component);
 
-  function Container() {
-    var _getPrototypeOf2;
+  _createClass(Container, null, [{
+    key: "setGlobalDefaultResizersStyle",
+    value: function setGlobalDefaultResizersStyle(newStyle) {
+      var st = Container.defaultResizerStyle = typeof newStyle === "function" ? newStyle(Container.defaultResizerStyle) : newStyle;
+      Container.defaultResizerClass = css(st);
+    }
+  }]);
 
+  function Container(props) {
     var _this;
 
     _classCallCheck(this, Container);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Container)).call.apply(_getPrototypeOf2, [this].concat(args)));
-    _this.state = StateSaver$1.getStylesInfo(_this.props.localStorageKey);
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Container).call(this, props));
     _this.refsArr = [];
     _this._indexesToKeys = {};
 
@@ -431,8 +430,37 @@ function (_React$Component) {
       return _this.setState(_this._dimensionsStateModifier);
     };
 
+    _this.state = StateSaver$1.getStylesInfo(props.localStorageKey);
+    var ds = props.defaultResizerStyle;
+
+    if (ds) {
+      _this.defaultResizerClass = typeof ds === "function" ? ds(Container.defaultResizerStyle) : ds;
+    } else {
+      _this.defaultResizerClass = getCorrectProperty(props, "resizerClassName", Container.defaultResizerClass);
+    }
+
     return _this;
   }
+  /*  
+      Inner props:
+       _refsArrIterator;
+      _curRszIndex;
+      _initPtrPageDist;
+      _curD1;
+      _curD2;
+      _minD1;
+      _maxD1;
+      _minD2;
+      _maxD2;
+  */
+
+  /*
+      Possible refsArr elements:
+          * simple elements( div, span, etc. )
+          * other Containers
+          * components, that treat style property and render single child
+  */
+
 
   _createClass(Container, [{
     key: "_setInitialDimensionsCache",
@@ -539,10 +567,12 @@ Container.propTypes = {
   },
   resizerChildren: PropTypes.node,
   resizerClassName: PropTypes.string,
+  defaultResizerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   localStorageKey: PropTypes.string
 };
 Container.defaultProps = {
   type: "row"
 };
+Container.setGlobalDefaultResizersStyle(DEFAULT_RESIZER_STYLES);
 
 export { Resizer, Container };
