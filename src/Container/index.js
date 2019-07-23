@@ -1,17 +1,15 @@
-import React, { Children } from "react";
-import ReactDOM from "react-dom";
+import React, { createRef, isValidElement, Children, useReducer, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import cn from "classnames";
 import Resizer from "../Resizer";
 import StateSaver from "./StateSaver";
-import { css } from "emotion";
+import { css, cx } from "emotion";
 
-import { memoizeOneNumericArg, clamp, getCorrectProperty } from "../utils";
+import { memoizeOneNumericArg, clamp, getCorrectProperty, getNodeFromRef } from "../utils";
 import { ByType, UNIQUE_HASH, DEFAULT_RESIZER_STYLES } from "../constants";
 
 function childrenMapper( el ){
 
-    if( !React.isValidElement( el ) ){
+    if( !isValidElement( el ) ){
         return el;
     }
 
@@ -172,8 +170,8 @@ class Container extends React.Component{
         /* If a child would be rendered inside Resizer, event target would not have data-resizer-index attr */
         const index = this._curRszIndex = +e.currentTarget.dataset.resizerIndex;
         
-        const prevElement = this.refsArr[ index - 1 ];
-        const nextElement = this.refsArr[ index ];
+        const prevElement = getNodeFromRef( this.refsArr[ index - 1 ] );
+        const nextElement = getNodeFromRef( this.refsArr[ index ] );
 
         if( prevElement && nextElement ){
             /* Can drag only if resizer is not first or last child inside refsArr */
@@ -225,7 +223,7 @@ class Container extends React.Component{
         const index = this._curRszIndex;
 
         /* It is better to always check children here, because they could be unmounted while dragging */
-        if( this.refsArr[ index ] && this.refsArr[ index - 1 ] ){
+        if( getNodeFromRef( this.refsArr[ index ] ) && getNodeFromRef( this.refsArr[ index - 1 ] ) ){
 
             const { cursorPropName, cssSizeProp } = ByType[ this.props.type ];
             const step = e[ cursorPropName ] - this._initPtrPageDist;
@@ -238,22 +236,7 @@ class Container extends React.Component{
         }
     }
 
-    _getSaveRef = memoizeOneNumericArg( index => node => {
-
-        this.refsArr[ index ] = ReactDOM.findDOMNode( node );
-
-        /* findDOMNode may return text, so using instanceof check */
-        if( process.env.NODE_ENV !== "production" && this.refsArr[ index ] && !( this.refsArr[ index ] instanceof Element ) ){
-
-            if( !__JEST__ ){
-                /* I don't know how to mock refs instanceof in jest, so.... */
-                console.error(
-                    "af-react-grid: can't find ref for component:", node,
-                    "ReactDOM.findDomNode must return element for all children of Container."
-                );
-            }
-        }
-    });
+    _getSaveRef = memoizeOneNumericArg( index => this.refsArr[ index ] = createRef());
 
     render(){
 
@@ -270,7 +253,7 @@ class Container extends React.Component{
         return (
             <div
                 style={style}
-                className={cn(className,ByType[type].colClassName)}
+                className={cx(className,ByType[type].colClassName)}
                 children={Children.map( children, childrenMapper, this )}
             />
         )
@@ -287,10 +270,12 @@ class Container extends React.Component{
 
             const stateKey = this._indexesToKeys[ i ];
 
-            if( ref ){
+            const node = getNodeFromRef( ref );
+
+            if( node ){
                 res[ stateKey ] = {
                     ...curState[ stateKey ],
-                    [cssSizeProp]: ref[ offsetDim ],
+                    [cssSizeProp]: node[ offsetDim ],
     
                     /* If exact width/height is known, flexBasis may be erased */
                     flexBasis: "auto",

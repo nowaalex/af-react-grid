@@ -1,22 +1,14 @@
 {
   "name": "af-react-grid",
   "version": "1.1.6",
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": false,
   "browserslist": [
     "last 1 version",
     "> 2%",
     "not dead"
   ],
-  "module": "dist/bundle.esm.js",
-  "husky": {
-    "hooks": {
-      "pre-commit": "node scripts/commit.js pre",
-      "post-commit": "node scripts/commit.js post",
-      "pre-push": "npm run test"
-    }
-  },
+  "module": "src/",
+  "main": "src/",
   "repository": {
     "type": "git",
     "url": "https://github.com/nowaalex/af-react-grid"
@@ -44,44 +36,44 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "emotion": "^10.0.7",
+    "emotion": "^10.0.14",
     "prop-types": "^15.7.2",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
-    "react-draggable": "^3.2.1"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-draggable": "^3.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.3.4",
+    "@babel/core": "^7.5.5",
     "@babel/plugin-external-helpers": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.3.4",
-    "@babel/plugin-proposal-do-expressions": "^7.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-do-expressions": "^7.5.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.3.4",
-    "@babel/preset-env": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
-    "@babel/runtime": "^7.3.4",
+    "@babel/runtime": "^7.5.5",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^24.1.0",
-    "babel-loader": "^8.0.4",
+    "babel-jest": "^24.8.0",
+    "babel-loader": "^8.0.6",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "clean-webpack-plugin": "^1.0.1",
+    "clean-webpack-plugin": "^3.0.0",
     "fs": "^0.0.1-security",
     "html-webpack-plugin": "^3.2.0",
-    "husky": "^1.1.3",
-    "jest": "^24.1.0",
-    "jest-mock-console": "^0.4.0",
+    "husky": "^3.0.1",
+    "jest": "^24.8.0",
+    "jest-mock-console": "^1.0.0",
     "npm-run-all": "^4.1.3",
     "path": "^0.12.7",
-    "react-test-renderer": "^16.8.3",
-    "regenerator-runtime": "^0.13.1",
-    "rollup": "^1.4.0",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-node-resolve": "^4.0.1",
+    "react-test-renderer": "^16.8.6",
+    "regenerator-runtime": "^0.13.3",
+    "rollup": "^1.17.0",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-strip-prop-types": "^1.0.2",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.2.1"
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
   }
 }

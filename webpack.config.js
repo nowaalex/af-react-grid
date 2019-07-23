@@ -1,6 +1,6 @@
 const path = require( "path" );
 const HtmlWebpackPlugin = require( "html-webpack-plugin" );
-const CleanPlugin = require( "clean-webpack-plugin" );
+const CleanPlugin = require( "clean-webpack-plugin" ).CleanWebpackPlugin;
 
 module.exports = {
     entry: "./example_src/index.js",
@@ -21,7 +21,7 @@ module.exports = {
         modules: [ "node_modules", "src" ]
     },
     plugins: [
-        new CleanPlugin([ "example_dist" ]),
+        new CleanPlugin(),
         new HtmlWebpackPlugin({
             title: "Examples"
         })
