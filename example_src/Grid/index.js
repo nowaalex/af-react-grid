@@ -1,7 +1,52 @@
 import React from "react";
-
+import { jsx, css } from "@emotion/core";
 import Container from "Container";
-import Resizer from "Resizer";
+import DefaultResizer from "Resizer";
+
+const baseResizerClass = css`
+    flex-basis: 1px;
+    display: flex;
+    position: relative;
+    background: green;
+    z-index: 1;
+
+    &:after {
+        position: absolute;
+        content: "";
+    }
+`;
+
+const colResizer = css`
+    cursor: row-resize;
+    &:after {
+        height: 11px;
+        left: 0;
+        right: 0;
+        top: -5px;
+    }
+`;
+
+const rowResizer = css`
+    cursor: col-resize;
+    &:after {
+        width: 11px;
+        top: 0;
+        bottom: 0;
+        left: -5px;
+    }
+`;
+
+const Resizer = React.memo( props => (
+    <DefaultResizer 
+        {...props}
+        css={css`
+            ${baseResizerClass}
+            ${props.type==="col" ? colResizer : rowResizer}
+        `}
+    />
+));
+
+Resizer.isResizer = true;
 
 class Grid extends React.Component{
 

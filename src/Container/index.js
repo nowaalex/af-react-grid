@@ -1,11 +1,10 @@
 import React, { createRef, isValidElement, Children, useReducer, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import Resizer from "../Resizer";
 import StateSaver from "./StateSaver";
 import { css, cx } from "emotion";
 
 import { memoizeOneNumericArg, clamp, getCorrectProperty, getNodeFromRef } from "../utils";
-import { ByType, UNIQUE_HASH, DEFAULT_RESIZER_STYLES } from "../constants";
+import { ByType, UNIQUE_HASH } from "../constants";
 
 function childrenMapper( el ){
 
@@ -15,21 +14,17 @@ function childrenMapper( el ){
 
     const { type, props, key } = el;
 
-    const { resizerChildren, type: curType, localStorageKey } = this.props;
-
-    /* If we just use defaultProps, resizerClassName will not be passed down to nested Containers proprly */
-    const realResizerClassName = getCorrectProperty( this.props, "resizerClassName", Container.defaultResizerClass );
+    const { type: curType, localStorageKey } = this.props;
 
     const curIndex = this._refsArrIterator;
 
-    if( type === Resizer ){
+    if( type.isResizer ){
         return React.cloneElement( el, {
             index: curIndex,
             onDrag: this.dragHandler,
             onStart: this.dragStartHandler,
-            type: curType,
-            className: getCorrectProperty( props, "className", realResizerClassName )
-        }, getCorrectProperty( props, "children", resizerChildren ) );
+            type: curType
+        });
     }
 
     /*
@@ -58,8 +53,6 @@ function childrenMapper( el ){
 
     if( type === Container ){
         /* We sacrifice performance in order to make code more compact here */
-        passProps.resizerClassName = getCorrectProperty( props, "resizerClassName", realResizerClassName );
-        passProps.resizerChildren = getCorrectProperty( props, "resizerChildren", resizerChildren );
         passProps.localStorageKey = getCorrectProperty( props, "localStorageKey", localStorageKey + "_" + stateKey );
     }
 
@@ -80,9 +73,6 @@ class Container extends React.Component{
                 throw new Error( "Fragments are not allowed inside Container, use arrays instead" );
             }
         },
-        resizerChildren:        PropTypes.node,
-        resizerClassName:       PropTypes.string,
-        defaultResizerStyle:    PropTypes.oneOfType([ PropTypes.object, PropTypes.func ]),
         localStorageKey:        PropTypes.string
     }
 
@@ -90,24 +80,10 @@ class Container extends React.Component{
         type: "row"
     }
 
-    static setGlobalDefaultResizersStyle( newStyle ){
-        const st = Container.defaultResizerStyle = typeof newStyle === "function" ? newStyle( Container.defaultResizerStyle ) : newStyle;
-        Container.defaultResizerClass = css( st );
-    }
-
     constructor( props ){
         super( props );
 
         this.state = StateSaver.getStylesInfo( props.localStorageKey );
-
-        const { defaultResizerStyle: ds } = props;
-
-        if( ds ){
-            this.defaultResizerClass = typeof ds === "function" ? ds( Container.defaultResizerStyle ) : ds;
-        }
-        else{
-            this.defaultResizerClass = getCorrectProperty( props, "resizerClassName", Container.defaultResizerClass );
-        }
     }
 
 
@@ -315,7 +291,5 @@ class Container extends React.Component{
         clearTimeout( this._st );
     }
 }
-
-Container.setGlobalDefaultResizersStyle( DEFAULT_RESIZER_STYLES );
 
 export default Container;
