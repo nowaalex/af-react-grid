@@ -1,4 +1,13 @@
-import Resizer from "./Resizer";
 import Container from "./Container";
+import GridRoot from "./GridRoot";
+import { Cell, useCellStyle, useDefaultCellKey } from "./Cell";
+import createResizer from "./createResizer";
 
-export { Resizer, Container };
+export {
+    GridRoot,
+    Container,
+    createResizer,
+    Cell,
+    useCellStyle,
+    useDefaultCellKey
+};

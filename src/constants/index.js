@@ -1,24 +1,10 @@
-import { css } from "emotion";
-
 /* used as localStorage key and state default key prefix */
 export const UNIQUE_HASH = "<|-aFrCtGrD-|>";
-
-const rowClassName = css`
-    display: flex;
-    flex-flow: row nowrap;
-`;
-
-const colClassName = css`
-    display: flex;
-    flex-flow: column nowrap;
-`;
-
 
 /* used in Container component to glue col and row logic together in one component */
 export const ByType = {
     row: {
-        colClassName: rowClassName,
-        cursorPropName: "pageX",
+        cursorProp: "pageX",
         offsetDim: "offsetWidth",
         clientDim: "clientWidth",
         cssSizeProp: "width",
@@ -27,8 +13,7 @@ export const ByType = {
         minProps: [ "Left", "Right" ]
     },
     col: {
-        colClassName: colClassName,
-        cursorPropName: "pageY",
+        cursorProp: "pageY",
         offsetDim: "offsetHeight",
         clientDim: "clientHeight",
         cssSizeProp: "height",
@@ -37,3 +22,5 @@ export const ByType = {
         minProps: [ "Top", "Bottom" ]
     }
 };
+
+export const ElementRefProp = "data-afgrid-id";

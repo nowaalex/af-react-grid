@@ -1,11 +1,17 @@
 import React from "react";
 import { jsx, css } from "@emotion/core";
-import Container from "Container";
-import DefaultResizer from "Resizer";
+import styled from "@emotion/styled";
+import { Container, Cell, GridRoot, createResizer } from "index.js";
+
+const Child = styled.div`
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
 
 const baseResizerClass = css`
-    flex-basis: 1px;
-    display: flex;
+    flex: 0 0 1px;
     position: relative;
     background: green;
     z-index: 1;
@@ -36,17 +42,13 @@ const rowResizer = css`
     }
 `;
 
-const Resizer = React.memo( props => (
-    <DefaultResizer 
-        {...props}
-        css={css`
-            ${baseResizerClass}
-            ${props.type==="col" ? colResizer : rowResizer}
-        `}
-    />
-));
 
-Resizer.isResizer = true;
+const Resizer = createResizer(({ type, ...props }) => (
+    <div {...props} css={css`
+        ${baseResizerClass}
+        ${type==="col" ? colResizer : rowResizer}
+    `} />
+));
 
 class Grid extends React.Component{
 
@@ -67,49 +69,41 @@ class Grid extends React.Component{
         const { added } = this.state;
 
         return (
-            <React.Fragment>
-            <Container resizerClassName={undefined}>
-            <Resizer className="class4" />
-        </Container>
-                <div>
-                    <button onClick={this.add}>Add</button>
-                    <button onClick={this.remove}>Remove</button>
-                </div>
-                <Container localStorageKey="haha" style={{ height: "80vh" }}>
-                    <Container resizerChildren={<span>Hello</span>} type="col">
-                        {[
-                            <Resizer key="one">This resizer is placed in wrong place, so it is useless</Resizer>,
-                            <div key="two" style={{ background: "violet" }}>1</div>,
-                            <Resizer key="three">Yes, it can handle 2 resizers</Resizer>,
-                            <Resizer key="four">As if it was one</Resizer>
-                        ]}
-                        <Container resizerChildren={null} style={{ minHeight: 200, flexGrow: 1 }}>
-                                <div style={{flexGrow: 1, background: "red" }}>2</div>
-                                <Resizer />
-                                <div style={{ background: "blue", width: 200 }}>3</div>
-                                <Resizer />
-                                <div style={{ background: "pink", padding: "1em", border: "3px solid black" }}>Paddings and borders also work</div>
-                                <div style={{ background: "orange" }}>No resizer goes here</div>
-                                <Container type="col" style={{ flexGrow: 1 }}>
-                                    <div style={{flexGrow: 1, background: "red" }}>5</div>
-                                    <Resizer />
-                                    <div style={{ background: "blue", overflow: "scroll", padding: "2em" }}>A little overflow with big padding</div>
-                                    <Resizer />
-                                    <div style={{ background: "pink" }}>7</div>
-                                </Container>
-                            </Container>
-                        <Resizer />
-                        <div style={{ background: "yellow", overflow: "scroll" }}>Just overflow</div>
-                        <Resizer>One more useless resizer</Resizer>
-                    </Container>
+            <GridRoot>
+                <Container type="row" css={css`height: 70vh; width:80vw;`}>
+                    <Cell>
+                        <Child>1</Child>
+                    </Cell>
                     <Resizer />
-                    <div style={{ background: "aqua", flexGrow: 1 }}>Hello</div>
-                    {Array.from({ length: added }, ( el, i ) => (
-                        <div key={i}>ADDED {i}</div>
-                    ))}
+                    <Cell>
+                        <Child>2</Child>
+                    </Cell>
+                    <Resizer />
+                    <Cell>
+                        <Container type="col" css={css`width:20vw;`}>
+                            <Cell>
+                                <Child>1</Child>
+                            </Cell>
+                            <Resizer />
+                            <Cell>
+                                <Child>2</Child>
+                            </Cell>
+                            <Resizer />
+                            <Cell>
+                                <Child>7</Child>
+                            </Cell>
+                            <Resizer />
+                            <Cell>
+                                <Child>9</Child>
+                            </Cell>
+                        </Container>
+                    </Cell>
+                    <Resizer />
+                    <Cell>
+                        <Child>9</Child>
+                    </Cell>
                 </Container>
-            </React.Fragment>
-            
+            </GridRoot>
         );
     }
 }
