@@ -19,32 +19,12 @@ const ADDITIONAL_INLINE_STYLES = {
     boxSizing: "border-box"
 }
 
-export const useDefaultCellKey = () => {
+const useDefaultCellKey = () => {
     const keyRef = useRef();
     if( !keyRef.current ){
         keyRef.current = Math.random().toString(36).slice(-7);
     }
     return keyRef.current;
-}
-
-export const useCellStyle = cellKey => {
-    const GridModel = useContext( RootContext );
-    const type = useContext( TypeContext );
-    const [ curDimension, setCurDimension ] = useState( GridModel.get( cellKey ) );
-
-    useEffect(() => {
-        const up = () => setCurDimension( GridModel.get( cellKey ) );
-        const evt = `@cell/${cellKey}`;
-        GridModel.Events.on( evt, up );
-        return () => {
-            GridModel.Events.off( evt, up );
-        }
-    }, [ cellKey ]);
-
-    return useMemo(() => curDimension !== undefined ? ({
-        ...ADDITIONAL_INLINE_STYLES,
-        [ByType[type].cssSizeProp]: curDimension
-    }) : undefined, [ type, curDimension ]);
 }
 
 export const Cell = ({ children: SingleChild, cellKey }) => {
@@ -55,20 +35,35 @@ export const Cell = ({ children: SingleChild, cellKey }) => {
 
     const { style: providedStyle } = SingleChild.props;
 
+    const GridModel = useContext( RootContext );
+    const type = useContext( TypeContext );
     const defaultCellKey = useDefaultCellKey();
     const finalCellKey = cellKey || defaultCellKey;
-    const cellStyle = useCellStyle( finalCellKey, providedStyle );
+    const [ curDimension, setCurDimension ] = useState( GridModel.get( finalCellKey ) );
+
+    useEffect(() => {
+        const up = () => setCurDimension( GridModel.get( finalCellKey ) );
+        const evt = `@cell/${finalCellKey}`;
+        GridModel.Events.on( evt, up );
+        return () => {
+            if( !cellKey ){
+                GridModel.Events.off( evt, up );
+            }
+        }
+    }, [ finalCellKey ]);
 
     const style = useMemo(() => {
-        if( !providedStyle ){
-            return cellStyle;
+
+        if( curDimension === undefined ){
+            return providedStyle;
         }
 
-        return cellStyle && {
+        return {
             ...providedStyle,
-            ...cellStyle
+            ...ADDITIONAL_INLINE_STYLES,
+            [ByType[type].cssSizeProp]: curDimension
         }
-    }, [ cellStyle, providedStyle ]);
+    }, [ curDimension, providedStyle ]);
 
     return cloneElement( SingleChild, { [ElementRefProp]: finalCellKey, style });
 }

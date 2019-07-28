@@ -7,7 +7,5 @@ export {
     GridRoot,
     Container,
     createResizer,
-    Cell,
-    useCellStyle,
-    useDefaultCellKey
+    Cell
 };
