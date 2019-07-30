@@ -46,9 +46,7 @@ export const Cell = ({ children: SingleChild, cellKey }) => {
         const evt = `@cell/${finalCellKey}`;
         GridModel.Events.on( evt, up );
         return () => {
-            if( !cellKey ){
-                GridModel.Events.off( evt, up );
-            }
+            GridModel.Events.off( evt, up );
         }
     }, [ finalCellKey ]);
 
