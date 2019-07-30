@@ -35,6 +35,7 @@ export const Cell = ({ children: SingleChild, cellKey }) => {
 
     const { style: providedStyle } = SingleChild.props;
 
+    const cellRef = useRef();
     const GridModel = useContext( RootContext );
     const type = useContext( TypeContext );
     const defaultCellKey = useDefaultCellKey();
@@ -50,6 +51,13 @@ export const Cell = ({ children: SingleChild, cellKey }) => {
         }
     }, [ finalCellKey ]);
 
+    useEffect(() => {
+        GridModel.registerCell( finalCellKey, type, cellRef );
+        return () => {
+            GridModel.unregisterCell( finalCellKey );
+        }
+    }, [ type, finalCellKey ]);
+
     const style = useMemo(() => {
 
         if( curDimension === undefined ){
@@ -63,5 +71,5 @@ export const Cell = ({ children: SingleChild, cellKey }) => {
         }
     }, [ curDimension, providedStyle ]);
 
-    return cloneElement( SingleChild, { [ElementRefProp]: finalCellKey, style });
+    return cloneElement( SingleChild, { [ElementRefProp]: finalCellKey, style, ref: cellRef });
 }

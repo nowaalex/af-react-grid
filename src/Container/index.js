@@ -1,3 +1,5 @@
+
+import { forwardRef } from "react";
 import { TypeContext } from "../contexts";
 import styled from "@emotion/styled";
 
@@ -13,12 +15,10 @@ const TypesMap = {
 };
 
 
-const Container = ({ children, type, ...props }) => (
+const Container = forwardRef(({ type, ...props }, ref ) => (
     <TypeContext.Provider value={type}>
-        <StyledContainer {...props} flexDirection={TypesMap[type]}>
-            {children}
-        </StyledContainer>
+        <StyledContainer {...props} flexDirection={TypesMap[type]} ref={ref} />
     </TypeContext.Provider>
-);
+));
 
 export default Container;
