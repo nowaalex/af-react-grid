@@ -69,7 +69,7 @@ class Grid extends React.Component{
         const { added } = this.state;
 
         return (
-            <GridRoot fixDimensionsAfterMount>
+            <GridRoot fixDimensionsDelay={1000}>
                 <Container type="row" css={css`height: 70vh; width:80vw;`}>
                     <Cell>
                         <Child>1</Child>

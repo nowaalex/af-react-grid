@@ -41,7 +41,7 @@ class CellDimensions {
     }
 }
 
-const GridRoot = ({ children, fixDimensionsAfterMount }) => {
+const GridRoot = ({ children, fixDimensionsDelay = -1 }) => {
     const modelRef = useRef();
 
     if( !modelRef.current ){
@@ -49,10 +49,16 @@ const GridRoot = ({ children, fixDimensionsAfterMount }) => {
     }
 
     useEffect(() => {
-        if( fixDimensionsAfterMount ){
-            modelRef.current.fixDimensions();
+        if( fixDimensionsDelay >= 0 ){
+            const timer = setTimeout(() => {
+                modelRef.current.fixDimensions();
+            }, fixDimensionsDelay );
+
+            return () => {
+                clearTimeout( timer );
+            }
         }
-    }, [ fixDimensionsAfterMount ])
+    }, [ fixDimensionsDelay ])
 
     return (
         <RootContext.Provider value={modelRef.current}>

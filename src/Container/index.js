@@ -1,23 +1,27 @@
 
 import { forwardRef } from "react";
 import { TypeContext } from "../contexts";
-import styled from "@emotion/styled";
+import { css } from "@emotion/core";
 
-const StyledContainer = styled.div`
+const containerBaseCss = css`
     display: flex;
-    flex-direction: ${props=>props.flexDirection};
     flex-wrap: nowrap;
 `;
 
-const TypesMap = {
-    col: "column",
-    row: "row"
-};
+const colCss = css`
+    ${containerBaseCss};
+    flex-direction: column;
+`;
+
+const rowCss = css`
+    ${containerBaseCss};
+    flex-direction: row;
+`;
 
 
 const Container = forwardRef(({ type, ...props }, ref ) => (
     <TypeContext.Provider value={type}>
-        <StyledContainer {...props} flexDirection={TypesMap[type]} ref={ref} />
+        <div css={type==="col"?colCss:rowCss} {...props} ref={ref} />
     </TypeContext.Provider>
 ));
 
