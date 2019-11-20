@@ -19,9 +19,9 @@ const rowCss = css`
 `;
 
 
-const Container = forwardRef(({ type, ...props }, ref ) => (
+const Container = forwardRef(({ type, Component = "div", ...props }, ref ) => (
     <TypeContext.Provider value={type}>
-        <div css={type==="col"?colCss:rowCss} {...props} ref={ref} />
+        <Component css={type==="col"?colCss:rowCss} {...props} ref={ref} />
     </TypeContext.Provider>
 ));
 
