@@ -1,13 +1,7 @@
-const path = require( "path" );
 const HtmlWebpackPlugin = require( "html-webpack-plugin" );
 const CleanPlugin = require( "clean-webpack-plugin" ).CleanWebpackPlugin;
 
 module.exports = {
-    entry: "./example_src/index.js",
-    output: {
-        path: path.resolve( __dirname, "example_dist" ),
-        filename: "[name].[hash].bundle.js"
-    },
     module: {
         rules: [
             {

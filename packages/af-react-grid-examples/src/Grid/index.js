@@ -1,7 +1,11 @@
 import React from "react";
-import { jsx, css } from "@emotion/core";
+import { css } from "@emotion/core";
 import styled from "@emotion/styled";
-import { Container, Cell, GridRoot, createResizer } from "index.js";
+import Container from "af-react-grid/core/Container";
+import createResizer from "af-react-grid/core/createResizer";
+import Cell from "af-react-grid/core/Cell";
+import GridRoot from "af-react-grid/core/GridRoot";
+
 
 const Child = styled.div`
     flex-grow: 1;

@@ -27,7 +27,7 @@ const useDefaultCellKey = () => {
     return keyRef.current;
 }
 
-export const Cell = ({ children: SingleChild, cellKey }) => {
+const Cell = ({ children: SingleChild, cellKey }) => {
 
     if( !isValidElement( SingleChild ) ){
         throw new Error( "Cell must have one child" );
@@ -73,3 +73,5 @@ export const Cell = ({ children: SingleChild, cellKey }) => {
 
     return cloneElement( SingleChild, { [ElementRefProp]: finalCellKey, style, ref: cellRef });
 }
+
+export default Cell;

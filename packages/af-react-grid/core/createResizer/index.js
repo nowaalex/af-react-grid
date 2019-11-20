@@ -53,7 +53,7 @@ const setExactSiblingsDimensions = ( GridModel, sibling, offsetDimensionProp ) =
 const createResizer = Component => memo(({ disabled }) => {
 
     const MutableStore = useRef({}).current;
-
+    
     const GridModel = useContext( RootContext );
     const containerType = useContext( TypeContext );
 

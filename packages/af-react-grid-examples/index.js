@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import Grid from "./Grid";
+import Grid from "./src/Grid";
 
 const App = () => (
     <div>
