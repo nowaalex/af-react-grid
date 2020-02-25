@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require( "html-webpack-plugin" );
-const CleanPlugin = require( "clean-webpack-plugin" ).CleanWebpackPlugin;
 
 module.exports = {
+    entry: "./index.js",
     module: {
         rules: [
             {
@@ -12,18 +12,11 @@ module.exports = {
         ]
     },
     resolve: {
-        modules: [ "node_modules", "src" ]
+        modules: [ "src", "node_modules" ]
     },
     plugins: [
-        new CleanPlugin(),
         new HtmlWebpackPlugin({
             title: "Examples"
         })
-    ],
-    devServer: {
-        watchOptions: {
-            poll: true,
-            aggregateTimeout: 300
-        }
-    }
+    ]
 }

@@ -2,8 +2,6 @@
   "name": "af-react-grid-examples",
   "version": "1.0.0",
   "sideEffects": false,
-  "module": "src/index.js",
-  "main": "src/index.js",
   "keywords": [
     "react",
     "resizable",
@@ -11,16 +9,30 @@
     "React resizable grid",
     "React flex resizable grid"
   ],
+  "scripts": {
+    "start": "webpack-dev-server --mode=development"
+  },
   "author": "alex <nowaalex@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/plugin-external-helpers": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@emotion/babel-preset-css-prop": "^10.0.27",
     "@emotion/core": "^10.0.22",
     "@emotion/styled": "^10.0.23",
+    "af-react-grid": "^1.0.0",
     "eventemitter3": "^4.0.0",
     "lodash": "^4.17.15",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-draggable": "^4.1.0"
+    "react-draggable": "^4.1.0",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
   }
 }

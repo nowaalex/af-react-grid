@@ -1,17 +1,10 @@
 {
   "private": true,
-  "browserslist": [
-    "last 1 version",
-    "> 2%",
-    "not dead"
-  ],
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "test": "jest",
-    "tests:clear-cache": "yarn cache clean",
-    "live": "webpack-dev-server --mode=development --config webpack.config.js --open --entry ./packages/af-react-grid-examples/index.js"
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.0",
