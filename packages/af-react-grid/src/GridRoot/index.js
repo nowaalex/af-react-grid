@@ -1,11 +1,12 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import EventEmitter from "eventemitter3";
 import { RootContext } from "../contexts";
 import { ByType } from "../constants";
 
 class CellDimensions extends EventEmitter {
 
-    Dimensions = {};
+    Dimensions = Object.create( null );
+
     Cells = new Map();
 
     get( id ){
@@ -39,12 +40,14 @@ class CellDimensions extends EventEmitter {
     }
 }
 
-const GridRoot = ({ children, fixDimensionsDelay = -1 }) => {
+const GridRoot = forwardRef(({ children, fixDimensionsDelay = -1 }, ref ) => {
     const modelRef = useRef();
 
     if( !modelRef.current ){
         modelRef.current = new CellDimensions();
     }
+
+    useImperativeHandle( ref, () => modelRef.current, []); 
 
     useEffect(() => {
         if( fixDimensionsDelay >= 0 ){
@@ -63,6 +66,6 @@ const GridRoot = ({ children, fixDimensionsDelay = -1 }) => {
             {children}
         </RootContext.Provider>
     );
-}
+});
 
 export default GridRoot;

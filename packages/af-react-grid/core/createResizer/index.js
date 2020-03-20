@@ -118,11 +118,11 @@ var createResizer = function createResizer(Component) {
       GridModel.set(id1, clamp(cur1 - delta, min1, max1));
       GridModel.set(id2, clamp(cur2 + delta, min2, max2));
     }, [containerType]);
-    return React.createElement(DraggableCore, {
+    return /*#__PURE__*/React.createElement(DraggableCore, {
       onStart: dragStartHandler,
       onDrag: dragHandler,
       disabled: disabled
-    }, React.createElement(Component, {
+    }, /*#__PURE__*/React.createElement(Component, {
       type: containerType,
       disabled: disabled
     }));

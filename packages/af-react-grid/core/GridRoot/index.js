@@ -1,12 +1,10 @@
 import _inheritsLoose from "@babel/runtime/helpers/inheritsLoose";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import EventEmitter from "eventemitter3";
 import { RootContext } from "../contexts";
 import { ByType } from "../constants";
 
-var CellDimensions =
-/*#__PURE__*/
-function (_EventEmitter) {
+var CellDimensions = /*#__PURE__*/function (_EventEmitter) {
   _inheritsLoose(CellDimensions, _EventEmitter);
 
   function CellDimensions() {
@@ -17,7 +15,7 @@ function (_EventEmitter) {
     }
 
     _this = _EventEmitter.call.apply(_EventEmitter, [this].concat(args)) || this;
-    _this.Dimensions = {};
+    _this.Dimensions = Object.create(null);
     _this.Cells = new Map();
     return _this;
   }
@@ -89,7 +87,7 @@ function (_EventEmitter) {
   return CellDimensions;
 }(EventEmitter);
 
-var GridRoot = function GridRoot(_ref5) {
+var GridRoot = forwardRef(function (_ref5, ref) {
   var children = _ref5.children,
       _ref5$fixDimensionsDe = _ref5.fixDimensionsDelay,
       fixDimensionsDelay = _ref5$fixDimensionsDe === void 0 ? -1 : _ref5$fixDimensionsDe;
@@ -99,6 +97,9 @@ var GridRoot = function GridRoot(_ref5) {
     modelRef.current = new CellDimensions();
   }
 
+  useImperativeHandle(ref, function () {
+    return modelRef.current;
+  }, []);
   useEffect(function () {
     if (fixDimensionsDelay >= 0) {
       var timer = setTimeout(function () {
@@ -109,9 +110,8 @@ var GridRoot = function GridRoot(_ref5) {
       };
     }
   }, [fixDimensionsDelay]);
-  return React.createElement(RootContext.Provider, {
+  return /*#__PURE__*/React.createElement(RootContext.Provider, {
     value: modelRef.current
   }, children);
-};
-
+});
 export default GridRoot;

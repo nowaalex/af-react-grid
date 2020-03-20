@@ -8,9 +8,7 @@ function _EMOTION_STRINGIFIED_CSS_ERROR__() { return "You have tried to stringif
 import React, { forwardRef } from "react";
 import { TypeContext } from "../contexts";
 
-var containerBaseCss =
-/*#__PURE__*/
-_css(process.env.NODE_ENV === "production" ? {
+var containerBaseCss = /*#__PURE__*/_css(process.env.NODE_ENV === "production" ? {
   name: "1dsbrkv-containerBaseCss",
   styles: "display:flex;flex-wrap:nowrap;;label:containerBaseCss;"
 } : {
@@ -20,9 +18,7 @@ _css(process.env.NODE_ENV === "production" ? {
   toString: _EMOTION_STRINGIFIED_CSS_ERROR__
 });
 
-var colCss = _cx(containerBaseCss,
-/*#__PURE__*/
-_css(process.env.NODE_ENV === "production" ? {
+var colCss = _cx(containerBaseCss, /*#__PURE__*/_css(process.env.NODE_ENV === "production" ? {
   name: "7rtuif-colCss",
   styles: "flex-direction:column;;label:colCss;"
 } : {
@@ -32,9 +28,7 @@ _css(process.env.NODE_ENV === "production" ? {
   toString: _EMOTION_STRINGIFIED_CSS_ERROR__
 }));
 
-var rowCss = _cx(containerBaseCss,
-/*#__PURE__*/
-_css(process.env.NODE_ENV === "production" ? {
+var rowCss = _cx(containerBaseCss, /*#__PURE__*/_css(process.env.NODE_ENV === "production" ? {
   name: "10yfcpt-rowCss",
   styles: "flex-direction:row;;label:rowCss;"
 } : {
@@ -51,9 +45,9 @@ var Container = forwardRef(function (_ref, ref) {
       className = _ref.className,
       props = _objectWithoutPropertiesLoose(_ref, ["type", "Component", "className"]);
 
-  return React.createElement(TypeContext.Provider, {
+  return /*#__PURE__*/React.createElement(TypeContext.Provider, {
     value: type
-  }, React.createElement(Component, _extends({
+  }, /*#__PURE__*/React.createElement(Component, _extends({
     className: _cx(type === "col" ? colCss : rowCss, className)
   }, props, {
     ref: ref
