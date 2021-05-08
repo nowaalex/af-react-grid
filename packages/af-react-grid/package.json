@@ -48,7 +48,7 @@
   "dependencies": {
     "emotion": "^10.0.27",
     "eventemitter3": "^4.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react-draggable": "^4.1.0"
   }
